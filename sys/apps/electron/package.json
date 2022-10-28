@@ -1,0 +1,19 @@
+{
+  "name": "my-app",
+  "version": "1.0.0",
+  "description": "This is a testbed for exercising \"scenario definition languages\" - or SDLS.",
+  "main": "sys/_boothelper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron --trace-warnings ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^18.1.0"
+  },
+  "dependencies": {
+    "esm": "^3.2.25",
+    "electron": "^18.1.0"
+  }
+}

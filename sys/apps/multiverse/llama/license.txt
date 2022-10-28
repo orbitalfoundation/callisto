@@ -1,0 +1,11 @@
+Model Information:
+* title:	Llama
+* source:	https://sketchfab.com/3d-models/llama-84a81f49914e464d97e7414f13b5b993
+* author:	tomanski (https://sketchfab.com/tomanski)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Llama" (https://sketchfab.com/3d-models/llama-84a81f49914e464d97e7414f13b5b993) by tomanski (https://sketchfab.com/tomanski) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
