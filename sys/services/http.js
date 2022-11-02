@@ -62,7 +62,7 @@ export default class Http {
 	runforever() {
 		// run forever
 		console.log("HTTP: running http server on port " + this.port)
-		this.http.listen(this.port,"localhost")
+		this.http.listen(this.port)
 	}
 
 	async resolve(args) {}

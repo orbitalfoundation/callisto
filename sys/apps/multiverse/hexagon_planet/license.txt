@@ -1,8 +1,0 @@
-Model Information:
-* title:	Hexagon Planet Earth
-* source:	https://sketchfab.com/3d-models/hexagon-planet-earth-786616e01204449293f3cc35d4723009
-* author:	BlockedGravity (https://sketchfab.com/blockedgravity)
-
-Model License:
-* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
-* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

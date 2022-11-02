@@ -79,7 +79,8 @@ export default class Net {
 
 	async _init_client() {
 		console.log("NET: started as client")
-		let modules = await import('https://cdn.socket.io/4.5.3/socket.io.esm.min.js')
+		//let modules = await import('https://cdn.socket.io/4.5.3/socket.io.esm.min.js')
+		let modules = await import('/sys/libs/socket.io.esm.min.js')
 		this.socket = modules.io()
 		this.socket.on('data', async data => {
 			for(let route of this.routes) {

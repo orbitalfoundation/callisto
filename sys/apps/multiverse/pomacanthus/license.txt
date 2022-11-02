@@ -1,8 +1,0 @@
-Model Information:
-* title:	Pomacanthus Arcuatus Rigged
-* source:	https://sketchfab.com/3d-models/pomacanthus-arcuatus-rigged-cd9a28c99d314fae84b9f3c1575128ac
-* author:	Armored Interactive (https://sketchfab.com/ychiang6)
-
-Model License:
-* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
-* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

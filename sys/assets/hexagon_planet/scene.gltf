@@ -1,0 +1,907 @@
+{
+  "accessors": [
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 2880,
+      "max": [
+        505.15667724609375,
+        505.15667724609375,
+        505.15667724609375
+      ],
+      "min": [
+        -505.15667724609375,
+        -505.15667724609375,
+        -505.15667724609375
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 34560,
+      "componentType": 5126,
+      "count": 2880,
+      "max": [
+        0.999374508857727,
+        0.9996790885925293,
+        0.9996790885925293
+      ],
+      "min": [
+        -0.9996790885925293,
+        -0.999374508857727,
+        -0.9996790885925293
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 17268,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 69120,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        508.7068176269531,
+        508.6767883300781,
+        508.5748596191406
+      ],
+      "min": [
+        -508.7068176269531,
+        -508.7068176269531,
+        -508.7068176269531
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 855504,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.999986469745636,
+        0.999986469745636,
+        0.9999864101409912
+      ],
+      "min": [
+        -0.999986469745636,
+        -0.999986469745636,
+        -0.9999864101409912
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 69072,
+      "componentType": 5125,
+      "count": 335151,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1641888,
+      "componentType": 5126,
+      "count": 53590,
+      "max": [
+        508.7068176269531,
+        508.7068176269531,
+        508.7068176269531
+      ],
+      "min": [
+        -508.7068176269531,
+        -508.6767883300781,
+        -508.7068176269531
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 2284968,
+      "componentType": 5126,
+      "count": 53590,
+      "max": [
+        0.999986469745636,
+        0.999986469745636,
+        0.9999864101409912
+      ],
+      "min": [
+        -0.999986469745636,
+        -0.999986469745636,
+        -0.9999864101409912
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 1409676,
+      "componentType": 5125,
+      "count": 235089,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 2928048,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        509.9256591796875,
+        509.9256591796875,
+        509.9256591796875
+      ],
+      "min": [
+        -509.9256591796875,
+        -509.9256591796875,
+        -509.9256591796875
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 3714432,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9999392628669739,
+        0.9991019368171692,
+        0.9999392032623291
+      ],
+      "min": [
+        -0.9999393224716187,
+        -0.9999393224716187,
+        -0.9999392032623291
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 2350032,
+      "componentType": 5125,
+      "count": 228966,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 4500816,
+      "componentType": 5126,
+      "count": 31069,
+      "max": [
+        509.5154113769531,
+        509.59375,
+        509.59375
+      ],
+      "min": [
+        -509.59375,
+        -509.59375,
+        -509.59375
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 4873644,
+      "componentType": 5126,
+      "count": 31069,
+      "max": [
+        0.9999393224716187,
+        0.9999393224716187,
+        0.9999392032623291
+      ],
+      "min": [
+        -0.9999393224716187,
+        -0.9999393224716187,
+        -0.9999392032623291
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 3265896,
+      "componentType": 5125,
+      "count": 82074,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 5246472,
+      "componentType": 5126,
+      "count": 20206,
+      "max": [
+        516.1033325195313,
+        516.0985107421875,
+        417.65228271484375
+      ],
+      "min": [
+        -516.1033325195313,
+        -516.0985107421875,
+        -515.8670654296875
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 5488944,
+      "componentType": 5126,
+      "count": 20206,
+      "max": [
+        0.9999657869338989,
+        0.9999825954437256,
+        0.9997574687004089
+      ],
+      "min": [
+        -0.9999751448631287,
+        -0.9999834299087524,
+        -0.999942421913147
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 3594192,
+      "componentType": 5125,
+      "count": 97128,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 5731416,
+      "componentType": 5126,
+      "count": 1000,
+      "max": [
+        509.7418518066406,
+        509.7418518066406,
+        412.223388671875
+      ],
+      "min": [
+        -509.7418518066406,
+        -509.7418518066406,
+        -509.7906188964844
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 5743416,
+      "componentType": 5126,
+      "count": 1000,
+      "max": [
+        0.9961238503456116,
+        0.9996790885925293,
+        0.9996790885925293
+      ],
+      "min": [
+        -0.9961238503456116,
+        -0.9993745684623718,
+        -0.7756645679473877
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 3982704,
+      "componentType": 5125,
+      "count": 4326,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 5755416,
+      "componentType": 5126,
+      "count": 9612,
+      "max": [
+        513.8164672851563,
+        511.6825256347656,
+        413.5716247558594
+      ],
+      "min": [
+        -513.8436889648438,
+        -511.6540222167969,
+        -511.3017883300781
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 5870760,
+      "componentType": 5126,
+      "count": 9612,
+      "max": [
+        0.9998621940612793,
+        0.9974932670593262,
+        0.9998690485954285
+      ],
+      "min": [
+        -0.9998165369033813,
+        -0.9999509453773499,
+        -0.9995577335357666
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 4000008,
+      "componentType": 5125,
+      "count": 38448,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "BlockedGravity (https://sketchfab.com/blockedgravity)",
+      "license": "SKETCHFAB Standard (https://sketchfab.com/licenses)",
+      "source": "https://sketchfab.com/3d-models/hexagon-planet-earth-786616e01204449293f3cc35d4723009",
+      "title": "Hexagon Planet Earth"
+    },
+    "generator": "Sketchfab-12.67.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 4153800,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 5986104,
+      "byteOffset": 4153800,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 10139904,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Paint_Metallic_Orange_peel_Slate_Grey",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.0
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Anodized_Titanium_Rough_Blue",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.0
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Paint_Metallic_Cool_Grey_1",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1.0,
+          0.3636653736,
+          0.0,
+          1.0
+        ],
+        "metallicFactor": 0.5078125,
+        "roughnessFactor": 0.0
+      }
+    },
+    {
+      "doubleSided": true,
+      "emissiveFactor": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "name": "Paint_Metallic_Orange_peel_Slate_Grey_0",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.1446265244
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Paint_Metallic_Cool_Grey_1_0",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1.0,
+          0.6912592434,
+          0.0,
+          1.0
+        ],
+        "metallicFactor": 0.8187881098,
+        "roughnessFactor": 0.0
+      }
+    },
+    {
+      "doubleSided": true,
+      "emissiveFactor": [
+        1.0,
+        0.6199539865914891,
+        0.0
+      ],
+      "name": "Paint_Metallic_Orange_peel_Cool_Grey",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "roughnessFactor": 0.0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Surface_Paint Metallic Orange peel Slate Grey_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0
+          },
+          "indices": 2,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Dual Graph-Type-1_Anodized Titanium Rough Blue_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 4,
+            "POSITION": 3
+          },
+          "indices": 5,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Dual Graph-Type-1_Anodized Titanium Rough Blue_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 7,
+            "POSITION": 6
+          },
+          "indices": 8,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Dual Graph.3_Paint Metallic Cool Grey #1_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 10,
+            "POSITION": 9
+          },
+          "indices": 11,
+          "material": 2,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Dual Graph.3_Paint Metallic Cool Grey #1_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 13,
+            "POSITION": 12
+          },
+          "indices": 14,
+          "material": 2,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Continents Mesh-1_Paint Metallic Orange peel Slate Grey_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 16,
+            "POSITION": 15
+          },
+          "indices": 17,
+          "material": 3,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Continents_Paint Metallic Cool Grey #1_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 19,
+            "POSITION": 18
+          },
+          "indices": 20,
+          "material": 4,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Frame_Paint Metallic Orange peel Cool Grey_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 22,
+            "POSITION": 21
+          },
+          "indices": 23,
+          "material": 5,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "463700d76c3f402cbecb11f77ec7e2f1.fbx"
+    },
+    {
+      "children": [
+        3,
+        5
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "matrix": [
+        -0.4981079388546472,
+        0.007232009017445725,
+        -0.867084874332119,
+        0.0,
+        0.0036025589447645228,
+        0.9999738486808263,
+        0.00627084711226083,
+        0.0,
+        0.8671075497416826,
+        -1.6563993433934762e-07,
+        -0.4981209664137298,
+        0.0,
+        1315.4100341796875,
+        -16.155899047851563,
+        1795.4300537109375,
+        1.0
+      ],
+      "name": "Active Camera"
+    },
+    {
+      "name": "Object_4"
+    },
+    {
+      "children": [
+        6
+      ],
+      "name": "Default"
+    },
+    {
+      "children": [
+        7,
+        10,
+        14,
+        18,
+        21,
+        24
+      ],
+      "matrix": [
+        1.0,
+        1.2246467991473532e-16,
+        -0.0,
+        -0.0,
+        -1.2246467991473532e-16,
+        1.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -1.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Octa-Continents-Type-3 - READY-99"
+    },
+    {
+      "children": [
+        8
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        500.0,
+        1.0
+      ],
+      "name": "Surface"
+    },
+    {
+      "children": [
+        9
+      ],
+      "name": "Surface"
+    },
+    {
+      "mesh": 0,
+      "name": "Surface_Paint Metallic Orange peel Slate Grey_0"
+    },
+    {
+      "children": [
+        11
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        500.0,
+        1.0
+      ],
+      "name": "Dual Graph-Type-1"
+    },
+    {
+      "children": [
+        12,
+        13
+      ],
+      "name": "Dual Graph-Type-1"
+    },
+    {
+      "mesh": 1,
+      "name": "Dual Graph-Type-1_Anodized Titanium Rough Blue_0"
+    },
+    {
+      "mesh": 2,
+      "name": "Dual Graph-Type-1_Anodized Titanium Rough Blue_0"
+    },
+    {
+      "children": [
+        15
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        500.0,
+        1.0
+      ],
+      "name": "Dual Graph.3"
+    },
+    {
+      "children": [
+        16,
+        17
+      ],
+      "name": "Dual Graph.3"
+    },
+    {
+      "mesh": 3,
+      "name": "Dual Graph.3_Paint Metallic Cool Grey #1_0"
+    },
+    {
+      "mesh": 4,
+      "name": "Dual Graph.3_Paint Metallic Cool Grey #1_0"
+    },
+    {
+      "children": [
+        19
+      ],
+      "matrix": [
+        0.9900000095367432,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.9900000095367432,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.9900000095367432,
+        0.0,
+        0.0,
+        0.0,
+        500.0,
+        1.0
+      ],
+      "name": "Continents Mesh-1"
+    },
+    {
+      "children": [
+        20
+      ],
+      "name": "Continents Mesh-1"
+    },
+    {
+      "mesh": 5,
+      "name": "Continents Mesh-1_Paint Metallic Orange peel Slate Grey_0"
+    },
+    {
+      "children": [
+        22
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        500.0,
+        1.0
+      ],
+      "name": "Continents"
+    },
+    {
+      "children": [
+        23
+      ],
+      "name": "Continents"
+    },
+    {
+      "mesh": 6,
+      "name": "Continents_Paint Metallic Cool Grey #1_0"
+    },
+    {
+      "children": [
+        25
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        500.0,
+        1.0
+      ],
+      "name": "Frame"
+    },
+    {
+      "children": [
+        26
+      ],
+      "name": "Frame"
+    },
+    {
+      "mesh": 7,
+      "name": "Frame_Paint Metallic Orange peel Cool Grey_0"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}

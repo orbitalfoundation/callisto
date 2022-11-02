@@ -71,14 +71,15 @@ export default class DB {
 
 	///
 	/// Can ingest individual items, arrays or trees
+	/// Also stuffs a domain in front - TODO this needs more study
 	/// Flattens trees and turns their enumeration of child objects into an enumeration of keys
 	///
 
-	async merge(data,local=true) {
-		await this._fragment_recurse(data,local)
+	async merge(data,local=true,domain="") {
+		await this._fragment_recurse(data,local,domain)
 	}
 
-	async _fragment_recurse(fragment,local=true) {
+	async _fragment_recurse(fragment,local=true,domain="") {
 
 		// a convenience feature for arrays
 		if(Array.isArray(fragment)) {
@@ -102,10 +103,12 @@ export default class DB {
 		// save fragment itself
 		await this._fragment_merge(fragment,local)
 
-		// as a convenience concept flatten children with citation of parent
+		// as a convenience concept flatten children with citation of parent AND rename children
+		// TODO this entire concept could be perhaps moved up to user land as a cleanup function?
 		if(children) {
 			for(const child of children) {
 				child.parent_uuid = fragment.uuid
+				child.uuid = `${fragment.uuid}/${child.id}`
 				await this._fragment_recurse(child,local)
 			}
 		}

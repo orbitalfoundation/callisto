@@ -1,20 +1,103 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title>Orbital</title>
-	<style>
-	html, body {
-		overflow: hidden;
-		width: 100%;
-		height: 100%;
-		margin: 0;
-		padding: 0;
-	}
-	</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Orbital</title>
+<style>
+
+html, body {
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+@import url(https://fonts.googleapis.com/css?family=Lato:400,300,100,700,900);
+
+h1, p, a {
+  margin: 0;
+  padding: 0;
+  font-family: 'Lato';
+  text-decoration:  none;
+}
+
+h1 {
+  font-size: 2.8em;
+  padding: 10px 0;
+  font-weight: 800;
+}
+
+p {
+  font-size: 1.1em;
+  font-weight: 100;
+}
+
+.header {
+  width: 100%;
+  padding:30px 0;
+  text-align: center;
+  color: #3f2572;
+  background: #e1c9f8;
+  xbackground:url(/sys/images/banner.png) no-repeat;
+  xbackground-size: cover;
+
+}
+
+
+.btn-bgstroke {
+  font-size: 20px;
+  display: inline-block;
+  border: 1px solid white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 300;
+  margin-top: 30px; 
+}
+
+.btn-bgstroke:hover {
+  background-color: white;
+  color: #33cccc;
+}
+</style>
+
 </head>
 <body>
+
+<section class="header">
+	<h1>Orbital</h1>
+    <p>Distributed Web App Sandbox</p>
+    <a class="btn-bgstroke">Create a new Sandbox</a>
+    <a class="btn-bgstroke" href="/docs">Docs</a>
+    <a class="btn-bgstroke" href="https://discord.gg/eRsBbcXjzX">Discord</a>
+</section>
+
 </body>
 </html>
 
-<script type="module" src="client.js"></script>
+<script type="module">
+
+// some data to paint
+let data = [
+	{uuid:"abcdef1",label:"AR Desktop",url:"/",art:"/sys/images/arux.jpg"},
+	{uuid:"abcdef2",label:"Multiplayer Sandbox",url:"/sys/apps/multiverse",art:"/sys/images/multiverse.jpeg"},
+	{uuid:"abcdef3",label:"Virtual Venice",art:"/sys/images/venice.png"},
+	{uuid:"abcdef4",label:"Cloud Reef",art:"/sys/images/reef.jpg"},
+	{uuid:"abcdef5",label:"Napa Winery Farmbot CV",art:"/sys/images/bird.jpg"},
+]
+
+// some card layout helpers
+import {CardSmall, CardSmallCollection} from './cards.js'
+
+// a fake persistent query wrapper
+let query = {}
+query.observe = (callback => { callback(data) })
+
+
+let card = new CardSmallCollection(query)
+
+document.body.appendChild(card)
+
+</script>
+
