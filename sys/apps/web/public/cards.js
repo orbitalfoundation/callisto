@@ -6,7 +6,7 @@ export class CardSmall extends HTMLElement {
 		this.update(item)
 	}
 	async update(item) {
-		let width = this.config && this.config.width ? this.config.width : "256px";
+		let width = this.config && this.config.width ? this.config.width : "100%";
 		this.item = item
 		this.id = item ? item.uuid : 0
 		if(!item) {
@@ -14,34 +14,39 @@ export class CardSmall extends HTMLElement {
 			return
 		}
 		this.innerHTML =
-			`<a href="${item.url}">
-			  <div style="
-				border:3px solid #e0e0e0;
-				box-shadow: 3px 3px 10px 0 rgba(0,0,0,0.35);
-		        transition: all .20s linear;
-				width:${width};
-				background:white;
-				overflow:hidden;
-				display:inline-block;
-				box-sizing:border-box;
-				margin:4px;
+			`<a style="
+				display:flex;
+				margin: 16px 0 16px 0;
 				padding:4px;
-				border-radius:5px;
+				background:#fffff8;
+				border-radius:3px;
+				xborder:3px solid #e0e0e0;
+				box-shadow: 3px 3px 10px 0 rgba(0,0,0,0.35);
+				transition: all .20s linear;
 				"
 				onMouseOver="this.style.transform='scale(1.05)'"
 				onMouseOut="this.style.transform='scale(1.0)'"
+				href="${item.url}"
 				>
-				<p>${item.label}</p>
-				<div style="
-					border:1px solid #e0e0e0;
-					height:82px;
-					background-image: url(${item.art});
-					background-size: cover;
-					background-repeat: no-repeat;
-					background-position: center center;
-					">
+					<div style="
+						flex: 1;
+						border:1px solid #e0e0e0;
+						background-image: url(${item.art});
+						background-size: cover;
+						background-repeat: no-repeat;
+						background-position: center center;
+						border-radius: 3%;
+						">
 					</div>
-				</div></a>`
+					<div style="
+						flex: 4;
+						padding: 0 8px 0 8px;
+						color:black;
+						">
+						<h3>${item.label}</h3>
+						<h4/>${item.about}</h4>
+					</div>
+			</a>`
 	}
 }
 

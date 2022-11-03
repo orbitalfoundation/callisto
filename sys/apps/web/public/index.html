@@ -3,82 +3,38 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <title>Orbital</title>
-<style>
-
-html, body {
-	overflow: hidden;
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
-}
-
-@import url(https://fonts.googleapis.com/css?family=Lato:400,300,100,700,900);
-@import url(https://fonts.googleapis.com/css2?family=Questrial&display=swap);
-
-body, h1, p, a {
-	margin: 0;
-	padding: 0;
-	font-family: 'Questrial', sans-serif;
-	text-decoration:  none;
-}
-
-h1 {
-	font-size: 2.8em;
-	padding: 10px 0;
-	font-weight: 800;
-}
-
-p {
-	font-size: 1.1em;
-	font-weight: 100;
-}
-
-body {
-	width:802px;
-	margin-left:auto;
-	margin-right:auto;
-}
-
-.header {
-	width: 100%;
-	padding:30px 0;
-	text-align: center;
-	color: #3f2572;
-	background: #e1c9f8;
-	xbackground:url(/sys/images/banner.png) no-repeat;
-	xbackground-size: cover;
-}
-
-.btn-bgstroke {
-	font-size: 20px;
-	display: inline-block;
-	border: 1px solid white;
-	padding: 10px 20px;
-	border-radius: 10px;
-	cursor: pointer;
-	font-weight: 300;
-	margin-top: 30px; 
-}
-
-.btn-bgstroke:hover {
-	background-color: white;
-	color: #33cccc;
-}
-</style>
-
+<link rel="stylesheet" type="text/css" href="/index.css">
 </head>
 <body>
 
-	<section class="header">
-	<h1 style="color:blue">Orbital</h1>
-	<p style="color:blue">Distributed Web Apps</p>
-	<a class="btn-bgstroke">Import Sandbox</a>
-	<a class="btn-bgstroke" href="https://orbitalweb.github.io">Docs</a>
-	<a class="btn-bgstroke" href="https://discord.gg/eRsBbcXjzX">Discord</a>
-	</section>
+<section class="header">
+<img src="/sys/images/orbital.jpg"></img>
+<h1>Orbital App Showcase</h1>
+<p><i>Reality is the platform</i></p>
+<br/>
+<h2>Build and Share your apps with the world and get <font style="color: blue">Inspired</font></h2>
+<br/>
+<a class="btn-bgstroke">Import App</a>
+<a class="btn-bgstroke" href="/about">About</a>
+<a class="btn-bgstroke" href="https://discord.gg/eRsBbcXjzX">Discord</a>
+</section>
 
-	<h2>Recent Sandboxes</h2>
+<br/>
+<br/>
+<h2>Recent Apps</h2>
+
+<div id="layout"></div>
+
+<footer style="background:black;color:white;padding:12px">
+Code of Ethics<br/>
+<br/>
+Resources and Links<br/>
+<br/>
+Twitter<br/>
+<br/>
+Contact<br/>
+</footer>
+
 
 </body>
 </html>
@@ -87,12 +43,53 @@ body {
 
 // some data to paint
 let data = [
-	{uuid:"abcdef0",label:"World Picker",url:"/sys/apps/worldpicker",art:"/sys/images/worldpicker.png"},
-	{uuid:"abcdef1",label:"AR Desktop",url:"/",art:"/sys/images/arux.jpg"},
-	{uuid:"abcdef2",label:"Multiplayer Sandbox",url:"/sys/apps/multiverse",art:"/sys/images/multiverse.jpeg"},
-	{uuid:"abcdef3",label:"Virtual Venice",art:"/sys/images/venice.png"},
-	{uuid:"abcdef4",label:"Cloud Reef",art:"/sys/images/reef.jpg"},
-	{uuid:"abcdef5",label:"Napa Winery Farmbot CV",art:"/sys/images/bird.jpg"},
+
+	{
+		uuid:"AR-Workbench",
+		label:"AR Workbench",
+		url:"/sys/apps/multiverse",
+		art:"/sys/images/arux.jpg",
+		about:"Augmented Reality Interfaces have different requirements from desktop or mobile phone interfaces. They are multi-player and require competing apps to co-render and share resources within the same view. Applications need to express layout with high level semantic intent such as 'place a clock on a nearby wall' rather than having total control of the display. This app explores what a heads up display ux may look and feel like. It demonstrates render-engine neutral high-level 3d scene descriptions, multiple camera rendering with both 3d and orthographic views and the ability to launch, run and manage other apps."
+	},
+
+	{
+		uuid:"Sandbox",
+		label:"Multiplayer Sandbox",
+		url:"/sys/apps/multiverse",
+		art:"/sys/images/multiverse.jpeg",
+		about:"Future multi-participant shared spaces may benefit from network effects if they allow participants to upload and share software agents and behaviors, what we colloqially refer to as 'apps' as well as images, text and static geometry. Sharing independently written digital software agents however requires more formally defining the intent, capabilities and permissions of each agent. Here we explore what a multiplayer sandbox may feel like for many participants."
+	},
+
+	{
+		uuid:"World Picker",
+		label:"World Picker",
+		url:"/sys/apps/worldpicker",
+		art:"/sys/images/worldpicker.png",
+		about:"Organizing information in a shared context may benefit from spatial metaphors. Here we provide a zone picker to allow people to create and place zones on a globe. Other views of the same data may include time lines and traditional file and folder views."
+	},
+
+	{
+		uuid:"Venice",
+		label:"Virtual Venice",
+		art:"/sys/images/venice.png",
+		about:"Digital Twins provide a synthesis of real and virtual information together; populating the digital model with sensor data - and ideally allowing participants in the virtual model to also have impact on the real world. In this scenario we explore what a digital twin of Venice could be like."
+
+	},
+
+	{
+		uuid:"Cloud Reef",
+		label:"Cloud Reef",
+		art:"/sys/images/reef.jpg",
+		about:"Reef Ecologies are complex ecosystems that efficiently capture energy and act as single organisms with emergent behaviors. These ecosystems are impacted by global warming and it may be possible to use digital tools to predictively model the outcome of complex systems here."
+	},
+
+	{
+		uuid:"abcdef5",
+		label:"Friend Finder CV",
+		art:"/sys/images/bird.jpg",
+		about:"Future software tooling will use computer vision to help provide sense-making and contextual awareness for users. There are a wide range of applications here from diy farmbot applications to simple friend finders. Here we exercise high level descriptions of a typical computer vision scenario."
+	},
+
 ]
 
 // some card layout helpers
@@ -105,7 +102,7 @@ query.observe = (callback => { callback(data) })
 
 let card = new CardSmallCollection(query)
 
-document.body.appendChild(card)
+document.getElementById("layout").appendChild(card)
 
 
 
