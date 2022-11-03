@@ -346,9 +346,7 @@ let scene2_light = {
 
 let mylayout = [
 
-	{ kind:"scene",
-	  uuid:"scene1",
-	},
+	{ kind:"scene", uuid:"scene1", },
 
 	mycamera,
 	mylight_positional,
@@ -358,9 +356,7 @@ let mylayout = [
 	myux,
 	myavatar,
 
-	{
-		kind:"scene", uuid:"scene2",
-	},
+	{ kind:"scene", uuid:"scene2", },
 
 	scene2_camera,
     scene2_light,

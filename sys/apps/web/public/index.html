@@ -14,64 +14,71 @@ html, body {
 }
 
 @import url(https://fonts.googleapis.com/css?family=Lato:400,300,100,700,900);
+@import url(https://fonts.googleapis.com/css2?family=Questrial&display=swap);
 
-h1, p, a {
-  margin: 0;
-  padding: 0;
-  font-family: 'Lato';
-  text-decoration:  none;
+body, h1, p, a {
+	margin: 0;
+	padding: 0;
+	font-family: 'Questrial', sans-serif;
+	text-decoration:  none;
 }
 
 h1 {
-  font-size: 2.8em;
-  padding: 10px 0;
-  font-weight: 800;
+	font-size: 2.8em;
+	padding: 10px 0;
+	font-weight: 800;
 }
 
 p {
-  font-size: 1.1em;
-  font-weight: 100;
+	font-size: 1.1em;
+	font-weight: 100;
+}
+
+body {
+	width:802px;
+	margin-left:auto;
+	margin-right:auto;
 }
 
 .header {
-  width: 100%;
-  padding:30px 0;
-  text-align: center;
-  color: #3f2572;
-  background: #e1c9f8;
-  xbackground:url(/sys/images/banner.png) no-repeat;
-  xbackground-size: cover;
-
+	width: 100%;
+	padding:30px 0;
+	text-align: center;
+	color: #3f2572;
+	background: #e1c9f8;
+	xbackground:url(/sys/images/banner.png) no-repeat;
+	xbackground-size: cover;
 }
 
-
 .btn-bgstroke {
-  font-size: 20px;
-  display: inline-block;
-  border: 1px solid white;
-  padding: 10px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 300;
-  margin-top: 30px; 
+	font-size: 20px;
+	display: inline-block;
+	border: 1px solid white;
+	padding: 10px 20px;
+	border-radius: 10px;
+	cursor: pointer;
+	font-weight: 300;
+	margin-top: 30px; 
 }
 
 .btn-bgstroke:hover {
-  background-color: white;
-  color: #33cccc;
+	background-color: white;
+	color: #33cccc;
 }
 </style>
 
 </head>
 <body>
 
-<section class="header">
-	<h1>Orbital</h1>
-    <p>Distributed Web App Sandbox</p>
-    <a class="btn-bgstroke">Create a new Sandbox</a>
-    <a class="btn-bgstroke" href="/docs">Docs</a>
-    <a class="btn-bgstroke" href="https://discord.gg/eRsBbcXjzX">Discord</a>
-</section>
+	<section class="header">
+	<h1 style="color:blue">Orbital</h1>
+	<p style="color:blue">Distributed Web Apps</p>
+	<a class="btn-bgstroke">Import Sandbox</a>
+	<a class="btn-bgstroke" href="https://orbitalweb.github.io">Docs</a>
+	<a class="btn-bgstroke" href="https://discord.gg/eRsBbcXjzX">Discord</a>
+	</section>
+
+	<h2>Recent Sandboxes</h2>
 
 </body>
 </html>
@@ -80,6 +87,7 @@ p {
 
 // some data to paint
 let data = [
+	{uuid:"abcdef0",label:"World Picker",url:"/sys/apps/worldpicker",art:"/sys/images/worldpicker.png"},
 	{uuid:"abcdef1",label:"AR Desktop",url:"/",art:"/sys/images/arux.jpg"},
 	{uuid:"abcdef2",label:"Multiplayer Sandbox",url:"/sys/apps/multiverse",art:"/sys/images/multiverse.jpeg"},
 	{uuid:"abcdef3",label:"Virtual Venice",art:"/sys/images/venice.png"},
@@ -98,6 +106,41 @@ query.observe = (callback => { callback(data) })
 let card = new CardSmallCollection(query)
 
 document.body.appendChild(card)
+
+
+
+
+
+
+
+window.onload = async () => {
+	if (!window.keplr) {
+		alert("Please install keplr wallet to authenticate");
+	} else {
+		const chainId = "cosmoshub-4";
+
+		// Enabling before using the Keplr is recommended.
+		// This method will ask the user whether to allow access if they haven't visited this website.
+		// Also, it will request that the user unlock the wallet if the wallet is locked.
+		await window.keplr.enable(chainId);
+
+		const offlineSigner = window.keplr.getOfflineSigner(chainId);
+
+		// You can get the address/public keys by `getAccounts` method.
+		// It can return the array of address/public key.
+		// But, currently, Keplr extension manages only one address/public key pair.
+		// XXX: This line is needed to set the sender address for SigningCosmosClient.
+		const accounts = await offlineSigner.getAccounts();
+
+		// Initialize the gaia api with the offline signer that is injected by Keplr extension.
+		//const cosmJS = new SigningCosmosClient(
+		//	"https://lcd-cosmoshub.keplr.app",
+		//	accounts[0].address,
+		//	offlineSigner,
+		//);
+	}
+}
+
 
 </script>
 

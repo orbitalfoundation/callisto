@@ -14,7 +14,8 @@ export class CardSmall extends HTMLElement {
 			return
 		}
 		this.innerHTML =
-			`<div style="
+			`<a href="${item.url}">
+			  <div style="
 				border:3px solid #e0e0e0;
 				box-shadow: 3px 3px 10px 0 rgba(0,0,0,0.35);
 		        transition: all .20s linear;
@@ -30,17 +31,17 @@ export class CardSmall extends HTMLElement {
 				onMouseOver="this.style.transform='scale(1.05)'"
 				onMouseOut="this.style.transform='scale(1.0)'"
 				>
-				<a href="${item.url}">${item.label}</a>
-					<div style="
-						border:1px solid #e0e0e0;
-						height:82px;
-						background-image: url(${item.art});
-						background-size: cover;
-						background-repeat: no-repeat;
-						background-position: center center;
-						">
+				<p>${item.label}</p>
+				<div style="
+					border:1px solid #e0e0e0;
+					height:82px;
+					background-image: url(${item.art});
+					background-size: cover;
+					background-repeat: no-repeat;
+					background-position: center center;
+					">
 					</div>
-				</div>`
+				</div></a>`
 	}
 }
 

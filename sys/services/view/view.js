@@ -63,16 +63,24 @@ class ViewSingleton {
 			return
 		}
 
-		//const camera1 = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, 1, -15), scene);
-		//let camera1 = this.camera1 = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 3, new BABYLON.Vector3(0, 0, 0))
-		let camera = scene.camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 10, 10), scene)
-		camera.setTarget(BABYLON.Vector3.Zero())
+		let camera = 0
+
+		if(fragment.arcrotatecamera) {
+			camera = new BABYLON.ArcRotateCamera("camera", 0, Math.PI / 2.5, 2, new BABYLON.Vector3(0, 0, 0))
+		} else {
+			camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 10, 10), scene)
+		}
+
+		scene.camera = camera
+
+		//camera.setTarget(BABYLON.Vector3.Zero())
+
+		camera.lowerRadiusLimit = 2
+		camera.upperRadiusLimit = 20
+		camera.attachControl(this.canvas, true)
+		camera.inputs.addMouseWheel()
 
 		if(fragment.universal) {
-			camera.lowerRadiusLimit = 2
-			camera.upperRadiusLimit = 20
-			camera.attachControl(this.canvas, true)
-			camera.inputs.addMouseWheel()
 			camera.inputs.attached["mousewheel"].wheelYMoveRelative = BABYLON.Coordinate.Y
 			camera.inputs.attached["mousewheel"].wheelPrecisionY = -1			
 		}
@@ -157,7 +165,20 @@ return 0;
 			let r = ((fragment.rgba >> 16) & 0xff) / 256.0
 			let g = ((fragment.rgba >> 8) & 0xff) / 256.0
 			let b = ((fragment.rgba) & 0xff) / 256.0
-			mat.diffuseColor = new BABYLON.Color3(r,g,b)
+			mat.diffuseColor = new BABYLON.Color3(r,g,b) // basic color
+			//mat.specularColor = new BABYLON.Color3(1,1,1) // specular highlights
+			//mat.emissiveColor = new BABYLON.Color3(1,1,1) // self lit
+			//mat.ambientColor = new BABYLON.Color3(1,1,1)
+			// TODO use alpha from here!
+			if(fragment.alpha) mat.alpha = fragment.alpha
+		}
+
+		if(fragment.emissive) {
+			let a = ((fragment.rgba >> 24) & 0xff) / 256.0
+			let r = ((fragment.rgba >> 16) & 0xff) / 256.0
+			let g = ((fragment.rgba >> 8) & 0xff) / 256.0
+			let b = ((fragment.rgba) & 0xff) / 256.0
+			mat.emissiveColor = new BABYLON.Color3(r,g,b) // self lit			
 		}
 
 		// todo deal with texture
