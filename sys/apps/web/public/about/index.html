@@ -15,16 +15,24 @@
 <br/>
 <br/>
 
-<h3>
-Orbital is an app framework for creating rich apps with an emphasis on self sovereign identity, granular security, shared state, persistence, distributed computation and 3d user interfaces.
-</h3>
+<h2>
+Orbital is an app container for running rich apps.
+</h2>
 
 <h4>
- It introduces the idea of a 'scenario definition language' where applications are wired together out of dynamically loaded services such as computer vision modules, deep learning modules and rendering and visualization modules.
+Orbital is similar to an operating system microkernel in that it manages the loading, unloading, thread management and messaging between applications and application services. It is also similar to a package manager such as cargo crates or npm in that it joins together pieces of an application on demand.
 </h4>
 
 <h4>
-These apps currently run within a web container but the intent is to also run natively on dedicated hardware such as next generation augmented reality glasses.
+Orbital exists to expand on design choices relative to application containers today. We believe that apps in the future will be built out of small pieces loosely joined and that computation will be distributed over the Internet rather than necessarily always on device. We also believe in reducing  barriers to creating and publishing apps.
+</h4>
+
+<h4>
+Orbital has an emphasis on self sovereign identity, granular security, shared state, persistence, distributed computation and 3d user interfaces. We introduce a 'scenario definition language' where applications are wired together out of dynamically loaded services such as computer vision modules, deep learning modules and rendering and visualization modules.
+</h4>
+
+<h4>
+Orbital apps are carefully scoped to currently run within a web container, this allows us to prototype much more quickly. The intent is to ultimately run natively on dedicated hardware such as next generation <a href="https://en.wikipedia.org/wiki/Augmented_reality">augmented reality</a> glasses. We currently (and will continue to) support javascript as the best scripting language of choice but will also include <a href="https://webassembly.org">WASM support</a>. We currently target <a href="https://www.babylonjs.com/">Babylon3D</a> as a 3d rasterizer but will target <a href="https://bevyengine.org/">Bevy3D</a> for embedded environments.
 </h4>
 
 <h4>

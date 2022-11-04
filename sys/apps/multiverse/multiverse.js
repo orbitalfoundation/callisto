@@ -166,7 +166,8 @@ let myavatar = {
 	    uuid: "/myavatar",
 	    kind: "gltf",
 	 network: "dynamic",
-	     art: "/sys/assets/llama/scene.gltf",
+//	     art: "/sys/assets/llama/scene.gltf",
+	     art: "/sys/assets/lowpolyman/scene.gltf",
 	  adjust: {xyz:[0,-0.5,0],ypr:[0,1.9,0]},
 	     whd: [1,1,1],
 	     xyz: [0,1,0],
@@ -430,6 +431,15 @@ export default class MyApp {
 
 		if(e.event == "pick") {
 			console.log("picking " + e.fragment.uuid)
+			if(e.fragment.uuid.includes("fish")) {
+				alert("cloud reef app picked")
+			}
+			if(e.fragment.uuid.includes("car")) {
+				location.href = "/"
+			}
+			if(e.fragment.uuid.includes("globe")) {
+				location.href = "/sys/apps/zonepicker"
+			}
 		}
 
 		if(e.event == "keydown") {
@@ -439,10 +449,11 @@ export default class MyApp {
 		// keyboard
 
 		if(e.event == "console") {
-			let json = eval('(' + e.text + ')')
-			if(json) {
-				console.log(json)
-				this.view.resolve({command:"load",load:json})
+			let fragment = eval('(' + e.text + ')')
+			if(fragment) {
+				console.log("desktop: console event")
+				console.log(fragment)
+				this.db.merge(fragment,true,this.domain)
 			} else {
 				console.log("bad eval")
 			}

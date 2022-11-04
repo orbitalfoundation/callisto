@@ -269,14 +269,18 @@ near.defaultDistance = 10
 		elem.background = "black";
 		ux.addControl(elem);   		
 
+		// TODO refine console keyboard a bit
 		elem.onKeyboardEventProcessedObservable.add((input) => {
 			if(input.keyCode == 13 && input.shiftKey == false) {
 				this.viewers.forEach(view=>{
-					console.log(input)
-					input.event = "keydown"
-					input.text = elem.text
-					view.resolve(input)
+					input.event = "console"
+					input.text = `${elem.text}`
 					elem.text = ""
+
+					view.routes.forEach(route => {
+						route.resolve(input)
+					})
+
 				})
 			}
 		});
@@ -448,7 +452,7 @@ near.defaultDistance = 10
 				let recurse = (m) => {
 					if(m.isPickable) {
 						scene.shadowGenerator.addShadowCaster(m)
-						console.log("view: adding shadow to " + m.id)
+						//console.log("view: adding shadow to " + m.id)
 					}
 					m.getChildMeshes(true,recurse)
 				}
@@ -544,10 +548,10 @@ near.defaultDistance = 10
 				console.error("view: error for node " + node.uuid + " cannot find parent " + fragment.parent_uuid)
 			} else {
 				if(node.parent && node.parent.uuid == parent.uuid) {
-					console.log("view: parent is correct")
+					//console.log("view: parent is correct")
 				} else {
 					node.parent = parent
-					console.log("view: set parent for " + node.uuid)
+					//console.log("view: set parent for " + node.uuid)
 				}
 			}
 		}

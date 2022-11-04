@@ -23,6 +23,7 @@
 <br/>
 <h2>Recent Apps</h2>
 
+<div id="loader" class="loader">Loading...</div>
 <div id="layout"></div>
 
 <footer style="background:black;color:white;padding:12px">
@@ -41,100 +42,26 @@ Contact<br/>
 
 <script type="module">
 
-// some data to paint
-let data = [
+// This is a web based default view for Orbital - it builds a view of recently edited apps
+// todo - later show date posted, number of participants and perhaps have an authors page also
 
-	{
-		uuid:"AR-Workbench",
-		label:"AR Workbench",
-		url:"/sys/apps/multiverse",
-		art:"/sys/images/arux.jpg",
-		about:"Augmented Reality Interfaces have different requirements from desktop or mobile phone interfaces. They are multi-player and require competing apps to co-render and share resources within the same view. Applications need to express layout with high level semantic intent such as 'place a clock on a nearby wall' rather than having total control of the display. This app explores what a heads up display ux may look and feel like. It demonstrates render-engine neutral high-level 3d scene descriptions, multiple camera rendering with both 3d and orthographic views and the ability to launch, run and manage other apps."
-	},
-
-	{
-		uuid:"Sandbox",
-		label:"Multiplayer Sandbox",
-		url:"/sys/apps/multiverse",
-		art:"/sys/images/multiverse.jpeg",
-		about:"Future multi-participant shared spaces may benefit from network effects if they allow participants to upload and share software agents and behaviors, what we colloqially refer to as 'apps' as well as images, text and static geometry. Sharing independently written digital software agents however requires more formally defining the intent, capabilities and permissions of each agent. Here we explore what a multiplayer sandbox may feel like for many participants."
-	},
-
-	{
-		uuid:"World Picker",
-		label:"World Picker",
-		url:"/sys/apps/worldpicker",
-		art:"/sys/images/worldpicker.png",
-		about:"Organizing information in a shared context may benefit from spatial metaphors. Here we provide a zone picker to allow people to create and place zones on a globe. Other views of the same data may include time lines and traditional file and folder views."
-	},
-
-	{
-		uuid:"Venice",
-		label:"Virtual Venice",
-		art:"/sys/images/venice.png",
-		about:"Digital Twins provide a synthesis of real and virtual information together; populating the digital model with sensor data - and ideally allowing participants in the virtual model to also have impact on the real world. In this scenario we explore what a digital twin of Venice could be like."
-
-	},
-
-	{
-		uuid:"Cloud Reef",
-		label:"Cloud Reef",
-		art:"/sys/images/reef.jpg",
-		about:"Reef Ecologies are complex ecosystems that efficiently capture energy and act as single organisms with emergent behaviors. These ecosystems are impacted by global warming and it may be possible to use digital tools to predictively model the outcome of complex systems here."
-	},
-
-	{
-		uuid:"abcdef5",
-		label:"Friend Finder CV",
-		art:"/sys/images/bird.jpg",
-		about:"Future software tooling will use computer vision to help provide sense-making and contextual awareness for users. There are a wide range of applications here from diy farmbot applications to simple friend finders. Here we exercise high level descriptions of a typical computer vision scenario."
-	},
-
-]
-
-// some card layout helpers
+// for now show a pile of cards from static data - todo later use database
+import data from "./data.js"
 import {CardSmall, CardSmallCollection} from './cards.js'
+let query = { observe: (callback => { callback(data) }) }
+document.getElementById("layout").appendChild(new CardSmallCollection(query))
+document.getElementById("loader").remove();
 
-// a fake persistent query wrapper
-let query = {}
-query.observe = (callback => { callback(data) })
-
-
-let card = new CardSmallCollection(query)
-
-document.getElementById("layout").appendChild(card)
-
-
-
-
-
-
-
+// go ahead and get keplr
+// todo - later allow keplr based authentication to post apps
 window.onload = async () => {
 	if (!window.keplr) {
 		alert("Please install keplr wallet to authenticate");
 	} else {
 		const chainId = "cosmoshub-4";
-
-		// Enabling before using the Keplr is recommended.
-		// This method will ask the user whether to allow access if they haven't visited this website.
-		// Also, it will request that the user unlock the wallet if the wallet is locked.
 		await window.keplr.enable(chainId);
-
 		const offlineSigner = window.keplr.getOfflineSigner(chainId);
-
-		// You can get the address/public keys by `getAccounts` method.
-		// It can return the array of address/public key.
-		// But, currently, Keplr extension manages only one address/public key pair.
-		// XXX: This line is needed to set the sender address for SigningCosmosClient.
 		const accounts = await offlineSigner.getAccounts();
-
-		// Initialize the gaia api with the offline signer that is injected by Keplr extension.
-		//const cosmJS = new SigningCosmosClient(
-		//	"https://lcd-cosmoshub.keplr.app",
-		//	accounts[0].address,
-		//	offlineSigner,
-		//);
 	}
 }
 
