@@ -25,6 +25,9 @@ export default class DB {
 			return
 		}
 
+		// have database run behaviors on a timer for now
+		setInterval(this.update.bind(this),10)
+
 	}
 
 	route(args) {
@@ -96,7 +99,7 @@ export default class DB {
 			return
 		}
 
-		// children is a convenience concept not stored in db - pull it out
+		// children is a convenience concept not actually stored in db - pull it out
 		let children = fragment.children
 		delete fragment.children
 
@@ -133,6 +136,7 @@ export default class DB {
 				prev[key] = value
 			}
 			current = prev
+			current.updated = Date.now()
 		}
 
 		// else save fresh
@@ -151,6 +155,9 @@ export default class DB {
 			this.storage[current.uuid]=current
 			//console.log("db: remembering " + current.uuid)
 		}
+
+		// deal with associated behaviors
+		await this.load_ecs(current)
 
 		// playing with various ways to network dirty state
 		// in this approach networking is a special route and i can do fine-grained decisions therefore
@@ -184,6 +191,86 @@ export default class DB {
 
 	}
 
+	// although i have a generic pool manager outside the db - i want a performant ecs system inside the db
+	handlers = {
+	}
+
+	async load_ecs(node) {
+
+		// any behaviors?
+		if(!node.ecs) return
+
+		// associate each
+		for(let path of node.ecs) {
+			let handler = this.handlers[path]
+			if(!handler) {
+				let blob = await import(path)
+				if(!blob) {
+					console.error("db: cannot load ecs " + path)
+					return
+				}
+				// make it
+				let construct = blob.default
+				if(!(construct instanceof Function)) {
+					console.error("db: bad agent" + path)
+					return
+				}
+				handler = new construct(this)
+				handler.nodes = []
+				this.handlers[path] = handler
+			}
+			handler.nodes.push(node) // todo - must pop on delete
+		}
+
+	}
+
+	async update() {
+
+
+		// visit all handlers and pass each one all nodes
+
+		for(let handler of Object.values(this.handlers)) {
+			if(handler.update) {
+				handler.update(this,handler.nodes)
+			}
+		}
+
+		// for now mark and sweep dirty nodes to publish
+		// TODO rather than doing a merge on data that is already 'in' the db just write to the listeners
+		// TODO later i think the data itself could mark which routes to publish to? revisit nov 15 2022
+
+		for(let node of Object.values(this.storage)) {
+			if(node.dirty) {
+				node.updated = Date.now()
+				delete node.dirty
+				for(const route of this.routes) {
+					//console.log("db: sending to routes " + current.uuid)
+					await route.resolve({data:node})
+				}
+
+			}
+		}
+
+	}
+
+	queryFastByUuid(uuid) {
+		// this is intended to be an in ram query with no await
+		let item = this.storage[uuid]
+		return item ? [item] : []
+	}
+
+	queryFastByHash(args) {
+		// this is intended to be an in ram query with no await
+		let matches = []
+		for(let item of Object.values(this.storage)) {
+			let match = true
+			for(let [key,value] of Object.entries(args)) {
+				if(args[key] != item[key]) match = false
+			}
+			if(match) matches.push(item)
+		}
+		return matches
+	}
 }
 
 /*

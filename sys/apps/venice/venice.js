@@ -22,8 +22,16 @@ let mylight_positional = {
 	     kind: "light",
 	  network: "static",
 	      xyz: [4,4,4],
-	      dir: [0,-1,1],
-	intensity: 15.0,
+	      dir: [0,-1,-1],
+	intensity: 35.0,
+}
+
+let mylight_ambient = {
+	     uuid: "/mylight1",
+	     kind: "light",
+	  network: "static",
+	      dir: [0,-1,-1],
+	intensity: 35.0,
 }
 
 //
@@ -35,9 +43,9 @@ let myground = {
 	kind:"gltf",
 	network:"static",
 	physics:{shape:"box",mass:0},
-	xyz:[0,5,0],
-	whd:[20,20,20],
-    art: "/sys/assets/venice.glb",
+	xyz:[0,2,0],
+	whd:[400,400,400],
+    art: "/sys/assets/city.glb",
 }
 
 
@@ -84,6 +92,7 @@ let mylayout = [
 
 	mycamera,
 	mylight_positional,
+	mylight_ambient,
 	myground,
 	myavatar,
 

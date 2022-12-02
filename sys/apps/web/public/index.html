@@ -6,64 +6,91 @@
 <link rel="stylesheet" type="text/css" href="/index.css">
 </head>
 <body>
+<div class="innerbody">
 
 <section class="header">
-<img src="/sys/images/orbital.jpg"></img>
-<h1>Orbital App Showcase</h1>
-<p><i>Reality is the platform</i></p>
-<br/>
-<h2>Build and Share your apps with the world and get <font style="color: blue">Inspired</font></h2>
-<br/>
-<a class="btn-bgstroke">Import App</a>
-<a class="btn-bgstroke" href="/about">About</a>
-<a class="btn-bgstroke" href="https://discord.gg/eRsBbcXjzX">Discord</a>
+<h1>Orbital Apps</h1>
+<div id=signin style="float:right">Sign In Using Keplr</div>
+<br>
+<hr>
 </section>
 
-<br/>
-<br/>
-<h2>Recent Apps</h2>
+<div id="yourapps" style="display:none">
+<h2>Your Apps</h2>
+<div id="loader_yours" class="loader">Loading...</div>
+<div id="layout_yours"></div>
+</div>
 
-<div id="loader" class="loader">Loading...</div>
-<div id="layout"></div>
+<div id="tutorials">
+<h2>Tutorials</h2>
+<div id="loader_tutorials" class="loader">Loading...</div>
+<div id="layout_tutorials"></div>
+</div>
 
-<footer style="background:black;color:white;padding:12px">
-Code of Ethics<br/>
-<br/>
-Resources and Links<br/>
-<br/>
-Twitter<br/>
-<br/>
-Contact<br/>
-</footer>
+<div id="popular">
+<h2>Popular</h2>
+<div id="loader_popular" class="loader">Loading...</div>
+<div id="layout_popular"></div>
+</div>
 
+<section class="header">
+<h1>Orbital Components</h1>
+<br>
+<hr>
+</section>
 
+</div>
 </body>
 </html>
 
 <script type="module">
 
-// This is a web based default view for Orbital - it builds a view of recently edited apps
-// todo - later show date posted, number of participants and perhaps have an authors page also
-
-// for now show a pile of cards from static data - todo later use database
-import data from "./data.js"
+import {yours_data, tutorials_data, popular_data} from "./data.js"
 import {CardSmall, CardSmallCollection} from './cards.js'
-let query = { observe: (callback => { callback(data) }) }
-document.getElementById("layout").appendChild(new CardSmallCollection(query))
-document.getElementById("loader").remove();
 
-// go ahead and get keplr
-// todo - later allow keplr based authentication to post apps
-window.onload = async () => {
+function yours_load() {
+	let query = { observe: (callback => { callback(yours_data) }) }
+	document.getElementById("layout_yours").appendChild(new CardSmallCollection(query))
+	document.getElementById("loader_yours").remove();
+}
+
+function tutorials_load() {
+	let query = { observe: (callback => { callback(tutorials_data) }) }
+	document.getElementById("layout_tutorials").appendChild(new CardSmallCollection(query))
+	document.getElementById("loader_tutorials").remove();
+}
+
+function popular_load() {
+	let query = { observe: (callback => { callback(popular_data) }) }
+	document.getElementById("layout_popular").appendChild(new CardSmallCollection(query))
+	document.getElementById("loader_popular").remove();
+}
+
+setTimeout(tutorials_load,1000)
+setTimeout(popular_load,1500)
+
+
+async function keplr() {
+	if(yourapps.style.display == "block") {
+		yourapps.style.display = "none"
+		signin.innerHTML = "Sign In Using Keplr"
+		return
+	}
 	if (!window.keplr) {
-		alert("Please install keplr wallet to authenticate");
+		alert("Please install or enable keplr.app")
 	} else {
 		const chainId = "cosmoshub-4";
 		await window.keplr.enable(chainId);
 		const offlineSigner = window.keplr.getOfflineSigner(chainId);
 		const accounts = await offlineSigner.getAccounts();
+		// -> get the actual user here not me
+		signin.innerHTML = "Welcome Anselm | Logout"
+		yourapps.style.display = "block"
+		setTimeout(yours_load,1000)
 	}
 }
+
+signin.onclick = keplr
 
 
 </script>

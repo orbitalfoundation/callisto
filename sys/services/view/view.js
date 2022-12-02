@@ -65,27 +65,49 @@ class ViewSingleton {
 
 		let camera = 0
 
+		let lookat = fragment.lookat ? new BABYLON.Vector3(...fragment.lookat) : new BABYLON.Vector3(0, 0, 0)
+		let xyz = fragment.xyz ? new BABYLON.Vector3(...fragment.xyz) : new BABYLON.Vector3(0,0,0)
+
 		if(fragment.arcrotatecamera) {
-			camera = new BABYLON.ArcRotateCamera("camera", 0, Math.PI / 2.5, 2, new BABYLON.Vector3(0, 0, 0))
+			// https://doc.babylonjs.com/features/featuresDeepDive/cameras/camera_introduction
+			let longitude = fragment.longitude || 0
+			let latitude = fragment.latitude || Math.PI / 2
+			let radius = fragment.radius || 1
+			camera = new BABYLON.ArcRotateCamera("camera", longitude, latitude, radius, lookat,scene)
+			let min = fragment.radiusmin ? fragment.radiusmin : 2
+			let max = fragment.radiusmax ? fragment.radiusmax : 100
+			camera.lowerRadiusLimit = min
+			camera.upperRadiusLimit = max
 		} else {
-			camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 10, 10), scene)
+			camera = new BABYLON.UniversalCamera("UniversalCamera",xyz, scene)
 		}
 
+		// arc rotate can also be set this way - and this may be better in general
+		camera.setTarget(lookat)
+
+		// arc rotate can be set this way too - and this may be better
+		camera.setPosition(xyz)
+
+		// remember this for ourselves
 		scene.camera = camera
 
-		//camera.setTarget(BABYLON.Vector3.Zero())
+		// camera controls
+		if(!fragment.ortho) {
 
-		camera.lowerRadiusLimit = 2
-		camera.upperRadiusLimit = 20
-		camera.attachControl(this.canvas, true)
-		camera.inputs.addMouseWheel()
+			// this is required
+			camera.attachControl(this.canvas, true)
 
+			// this is required
+			camera.inputs.addMouseWheel()
+		}
+
+		// universal camera fiddly stuff
 		if(fragment.universal) {
 			camera.inputs.attached["mousewheel"].wheelYMoveRelative = BABYLON.Coordinate.Y
 			camera.inputs.attached["mousewheel"].wheelPrecisionY = -1			
 		}
 
-		// scene 2 camera
+		// special model for orthographic cameras for widgets (multiple cameras may be active)
 		if(fragment.ortho) {
 		    camera.mode = camera.ORTHOGRAPHIC_CAMERA;
 		    const rect   = this.engine.getRenderingCanvasClientRect();
@@ -104,50 +126,62 @@ class ViewSingleton {
 
 		let uuid = fragment.uuid
 		let art = fragment.art
-		if(!fragment.xyz) {
 
-return 0;
-			// this destroys shadows
-			// just add ambient light - todo refine - maybe separate these lights as types
-			let light = new BABYLON.HemisphericLight(fragment.uuid,new BABYLON.Vector3(0, 1, 0),scene)
-			return light
-		} else {
+		let light = 0;
 
-			// make a point light
-			let lightpos = new BABYLON.Vector3(...fragment.xyz);
-			let lightdir = new BABYLON.Vector3(...fragment.dir);
-			//let light = new BABYLON.PointLight(fragment.uuid, lightpos, scene);
-			var light = new BABYLON.DirectionalLight(fragment.uuid,lightdir,scene)
-//			light.position = lightpos
-//			light.intensity = fragment.intensity || 2.5;
+		let xyz = fragment.xyz ? new BABYLON.Vector3(...fragment.xyz) : new BABYLON.Vector3(0,0,0)
+		let dir = fragment.dir ? new BABYLON.Vector3(...fragment.dir) : new BABYLON.Vector3(0, -1, 0)
 
-			// make art - todo make optional - or have as debug
+		switch(fragment.kind) {
+			case "light":
+			case "pointlight":
+				light = new BABYLON.PointLight(fragment.uuid,xyz,scene)
+				break
+			case "directionallight":
+			case "directionalight":
+				light = new BABYLON.DirectionalLight(fragment.uuid,dir,scene)
+				console.log("made light")
+				break
+			case "spotlight":
+				light = new BABYLON.HemisphericLight(fragment.uuid,xyz,dir,fragment.angle||1,fragment.exponent||2,scene)
+				break
+			case "hemisphericlight":
+				light = new BABYLON.HemisphericLight(fragment.uuid,dir,scene)
+				break
+			default:
+				throw "view: bad light"
+		}
+
+		light.intensity = fragment.intensity || 1.0;
+		// light.falloffType = 2
+
+		// debug
+		if(fragment.debug) {
 			var lightSphere = BABYLON.Mesh.CreateSphere("sphere", 10, 0.1, scene)
-			lightSphere.position = light.position
+			lightSphere.position = xyz
 			lightSphere.material = new BABYLON.StandardMaterial("light", scene)
 			lightSphere.material.emissiveColor = new BABYLON.Color3(1, 1, 0)
-//			light.falloffType = 2
-
-			// TODO - must destroy shadow generator if destroying light
-			if(fragment.shadows && !scene.shadowGenerator) {
-				scene.shadowGenerator = light.shadowGenerator = new BABYLON.ShadowGenerator(4096, light)
-				console.log("view: light/scene created shadow emitter")
-				//scene.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
-				scene.shadowGenerator.useExponentialShadowMap = true
-			}
-
-			// attach to camera for fun - todo refine
-			/*
-			if(false || fragment.attach_to_camera) {
-				let camera1 = this.camera1;
-				scene.registerBeforeRender( () => {
-					light.position.x = camera1.position.x
-					lightSphere.position = light.position
-				})
-			}*/
-
-			return light
 		}
+
+		if(fragment.shadows && !scene.shadowGenerator) {
+			scene.shadowGenerator = light.shadowGenerator = new BABYLON.ShadowGenerator(4096, light)
+			console.log("view: light/scene created shadow emitter")
+			//scene.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE
+			scene.shadowGenerator.useExponentialShadowMap = true
+			// TODO - must destroy shadow generator if destroying light
+		}
+
+		// attach to camera
+		/*
+		if(false || fragment.attach_to_camera) {
+			let camera1 = this.camera1;
+			scene.registerBeforeRender( () => {
+				light.position.x = camera1.position.x
+				lightSphere.position = light.position
+			})
+		}*/
+
+		return light
 	}
 
 	///
@@ -382,6 +416,14 @@ near.defaultDistance = 10
 		return BABYLON.MeshBuilder.CreateSphere(fragment.uuid,{},scene)
 	}
 
+	create_line(fragment,scene) {
+		let l = fragment.points
+		let p1 = new BABYLON.Vector3(l[0][0],l[0][1],0)
+		let p2 = new BABYLON.Vector3(l[1][0],l[1][1],0)
+		let points = [p1,p2]
+		return BABYLON.MeshBuilder.CreateLines(fragment.uuid,{points}, scene)
+	}
+
 	debug(mesh,scene) {
 
 		const bv = mesh.getHierarchyBoundingVectors()
@@ -420,31 +462,40 @@ near.defaultDistance = 10
 		    const bv = mesh.getHierarchyBoundingVectors()
 		    const sz = { x: bv.max.x - bv.min.x, y: bv.max.y - bv.min.y, z: bv.max.z - bv.min.z }
 
-		    // center mesh at 0,0,0 - todo make optional
-		    mesh.position.x -= ( bv.min.x + sz.x/2 )
-		    mesh.position.y -= ( bv.min.y + sz.y/2 )
-		    mesh.position.z -= ( bv.min.z + sz.z/2 )
+		    // center mesh at 0,0,0 if desired
+		    if(fragment.recenter) {
+			    mesh.position.x -= ( bv.min.x + sz.x/2 )
+			    mesh.position.y -= ( bv.min.y + sz.y/2 )
+			    mesh.position.z -= ( bv.min.z + sz.z/2 )
+			}
 
 		    // scale mesh to 1,1,1 (workaround for transform compute order issue) - todo make optional
-
-		    let extent = sz.x > sz.y ? sz.x : sz.y
-		    extent = sz.z > extent ? sz.z : extent
-		    extent = Math.sqrt ( extent * extent )
-
-			let scale = new BABYLON.TransformNode(uuid,scene)
-		    scale.scaling.x = 1.0 / extent;
-		    scale.scaling.y = 1.0 / extent;
-		    scale.scaling.z = 1.0 / extent;
-		    mesh.parent = scale
+		    if(fragment.rescale) {
+			    let extent = sz.x > sz.y ? sz.x : sz.y
+			    extent = sz.z > extent ? sz.z : extent
+			    extent = Math.sqrt ( extent * extent )
+				let scale = new BABYLON.TransformNode(uuid,scene)
+			    scale.scaling.x = 1.0 / extent;
+			    scale.scaling.y = 1.0 / extent;
+			    scale.scaling.z = 1.0 / extent;
+			    mesh.parent = scale
+			    mesh = scale
+			}
 
 		    // a bit of a hack to support fine grained adjustment since gltfs are so bonkers
-		    if(fragment.adjust) {
-				scale.position.y = fragment.adjust.xyz[1]
-				scale.rotation.y = fragment.adjust.ypr[1]
+		    if(fragment.adjust && fragment.adjust.xyz) {
+				mesh.position.x = fragment.adjust.xyz[0]
+				mesh.position.y = fragment.adjust.xyz[1]
+				mesh.position.z = fragment.adjust.xyz[2]
+			}
+		    if(fragment.adjust && fragment.adjust.ypr) {
+				mesh.rotation.x = fragment.adjust.ypr[0]
+				mesh.rotation.y = fragment.adjust.ypr[1]
+				mesh.rotation.z = fragment.adjust.ypr[2]
 		    }
 
-		    // insert gltf into root node
-		    scale.parent = node
+			// insert gltf into root node
+			mesh.parent = node
 
 			// add shadows
 			if(scene.shadowGenerator) {
@@ -456,10 +507,102 @@ near.defaultDistance = 10
 					}
 					m.getChildMeshes(true,recurse)
 				}
-				recurse(scale)
+				recurse(mesh)
+			}
+
+			// pull out navigation info if desired
+			let results = []
+			//this.scan_navmesh(mesh,results)
+
+			// make bidir
+			if(results.length) {
+				this.bidir(results)
+				console.log(JSON.stringify(results))
 			}
 
 		})
+		return node
+	}
+
+	bidir(results) {
+		let hashed = {}
+		results.forEach(result=>{hashed[result.uuid]=result})
+
+		results.forEach(result=>{
+			if(!result) { console.error("bad"); return }
+			// visit dests of each source
+			result.c.forEach(dest=>{
+				// get dest and make sure it has a back link to source
+				let d = hashed[dest]
+				if(d == null) {
+					console.error("bad " + dest)
+				} else {
+					let found = false 
+					d.c.forEach(d2=>{
+						if(d2 == result.uuid) found = true
+					})
+					if(!found) {
+						d.c.push(result.uuid)
+					}
+				}
+			})
+		})
+	}
+
+	scan_navmesh(node,collection) {
+
+		let n = node.name
+
+		let i = n.indexOf("_WALK")
+		if(i >=0 ) {
+
+		    const bv = node.getHierarchyBoundingVectors()
+		    const sz = { x: bv.max.x - bv.min.x, y: bv.max.y - bv.min.y, z: bv.max.z - bv.min.z }
+
+			let x = node.position.x - ( bv.min.x + sz.x/2 )
+			let y = node.position.y - ( bv.min.y + sz.y/2 )
+			let z = node.position.z - ( bv.min.z + sz.z/2 )
+
+			let parts = n.substring(i+5).split("_")
+
+			let uuid = parts.shift()
+			let c = parts
+
+			collection.push({ xyz: [x,y,z], uuid, c })
+		}
+
+		let children = node.getChildren()
+		children.forEach(child=>{
+			this.scan_navmesh(child,collection)
+		})
+
+		return collection
+	}
+
+	create_sound(fragment,scene) {
+
+		let node = new BABYLON.TransformNode(fragment.uuid,scene)
+
+		let id = fragment.uuid + "/sound"
+		let soundfile = '/sys/assets/horn.wav'
+
+		var volume = 1
+		var playbackRate = 1
+		let loop = false
+		let autoplay = false
+
+		let sound = null
+
+		let handler = () => {
+			console.log("sound callback called")
+			if(sound) {
+				console.log("has sound")
+				sound.attachToMesh(node)
+			}
+		}
+
+		sound = new BABYLON.Sound(id, soundfile, scene, handler, { playbackRate, volume, loop, autoplay });
+
 		return node
 	}
 
@@ -467,19 +610,26 @@ near.defaultDistance = 10
 	/// manufacture a new a graphical artifact from an orbital fragment
 	///
 
-	babylon_create_node(fragment,scene) {
+	create_node(fragment,scene) {
 		let uuid = fragment.uuid
 		let art = fragment.art
 		switch(fragment.kind) {
 			case "scene": return this.create_scene(fragment)
+			case "sound": return this.create_sound(fragment)
 			case "textarea": return this.create_text(fragment,scene)
 			case "ground":
 			case "box": return this.create_box(fragment,scene)
 			case "sphere": return this.create_sphere(fragment,scene)
 			case "camera": return this.create_camera(fragment,scene)
+			case "pointlight":
+			case "directionallight":
+			case "directionalight":
+			case "spotlight":
+			case "hemisphericlight":
 			case "light": return this.create_light(fragment,scene)
 			case "gltf": return this.create_gltf(fragment,scene)
 			case "glb": return this.create_gltf(fragment,scene)
+			case "line": return this.create_line(fragment,scene)
 			default: return new BABYLON.TransformNode(uuid,scene)
 		}
 	}
@@ -519,7 +669,7 @@ near.defaultDistance = 10
 				console.log(fragment)
 				return null
 			}
-			node = this.babylon_nodes[uuid] = this.babylon_create_node(fragment,scene)
+			node = this.babylon_nodes[uuid] = this.create_node(fragment,scene)
 			if(!node) {
 				console.error("view: could not make node " + fragment.uuid)
 				return 0
@@ -577,21 +727,21 @@ near.defaultDistance = 10
 	//
 
 		// revise rotation?
-		if(fragment.ypr && !(node.rotation.x == fragment.ypr[0] && node.rotation.y == fragment.ypr[1] && node.rotation.z==fragment.ypr[2])) {
+		if(fragment.ypr && node.rotation && !(node.rotation.x == fragment.ypr[0] && node.rotation.y == fragment.ypr[1] && node.rotation.z==fragment.ypr[2])) {
 			node.rotation.x = fragment.ypr[0]
 			node.rotation.y = fragment.ypr[1]
 			node.rotation.z = fragment.ypr[2]
 		}
 
 		// revise position?
-		if(fragment.xyz && !(node.position.x == fragment.xyz[0] && node.position.y == fragment.xyz[1] && node.position.z==fragment.xyz[2])) {
+		if(fragment.xyz && node.position && !(node.position.x == fragment.xyz[0] && node.position.y == fragment.xyz[1] && node.position.z==fragment.xyz[2])) {
 			node.position.x = fragment.xyz[0]
 			node.position.y = fragment.xyz[1]
 			node.position.z = fragment.xyz[2]
 		}
 
 		// revise scale?
-		if(fragment.whd && !(node.scaling.x == fragment.whd[0] && node.scaling.y == fragment.whd[1] && node.scaling.z==fragment.whd[2])) {
+		if(fragment.whd && node.scaling && !(node.scaling.x == fragment.whd[0] && node.scaling.y == fragment.whd[1] && node.scaling.z==fragment.whd[2])) {
 			node.scaling.x = fragment.whd[0]
 			node.scaling.y = fragment.whd[1]
 			node.scaling.z = fragment.whd[2]
@@ -600,11 +750,12 @@ near.defaultDistance = 10
 		// revise lookat? have this last since it depends on camera state
 		if(fragment.lookat && !(node.lookat && node.lookat.x == fragment.lookat[0] && node.lookat.y == fragment.lookat[1] && node.lookat.z==fragment.lookat[2])) {
 			// todo - this is a bit of a hack to operate directly on the camera - it should ideally be node set target
-if(!node.setTarget) {
-  console.error("node is not a camera??? " + node.kind + " " + node.uuid)
-  console.log(node)
-} else
-			node.setTarget(new BABYLON.Vector3(...fragment.lookat))
+			if(!node.setTarget) {
+				console.error("node is not a camera??? " + node.kind + " " + node.uuid)
+				console.log(node)
+			} else {
+				node.setTarget(new BABYLON.Vector3(...fragment.lookat))
+			}
 			node.lookat = fragment.lookat
 		}
 
@@ -680,13 +831,6 @@ if(!node.setTarget) {
 
 		})
 
-		document.addEventListener("keydown", (e,args) => {
-			// TODO - it's not great that I am finding the back channel to listeners this way - maybe richer concepts of listening are needed
-			this.viewers.forEach(view=>{
-				e.event = "keydown"
-				view.routes.forEach(route => { route.resolve(e) })
-			})
-		})
 	}
 
 }
