@@ -9,6 +9,7 @@
 <div class="innerbody">
 
 <section class="header">
+<br>
 <h1>Orbital Apps</h1>
 <div id=signin style="float:right">Sign In Using Keplr</div>
 <br>
@@ -31,13 +32,29 @@
 <h2>Popular</h2>
 <div id="loader_popular" class="loader">Loading...</div>
 <div id="layout_popular"></div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 </div>
 
-<section class="header">
-<h1>Orbital Components</h1>
 <br>
-<hr>
-</section>
+<br>
+<br>
+<br>
+<br>
+<h1>Orbital Components</h1>
+<hr/>
+
+<div id="popular">
+<h2>Popular Components</h2>
+<div id="loader_components" class="loader">Loading...</div>
+<div id="layout_components"></div>
+</div>
 
 </div>
 </body>
@@ -45,7 +62,7 @@
 
 <script type="module">
 
-import {yours_data, tutorials_data, popular_data} from "./data.js"
+import {yours_data, tutorials_data, popular_data, components_data } from "./data.js"
 import {CardSmall, CardSmallCollection} from './cards.js'
 
 function yours_load() {
@@ -66,8 +83,15 @@ function popular_load() {
 	document.getElementById("loader_popular").remove();
 }
 
+function components_load() {
+	let query = { observe: (callback => { callback(components_data) }) }
+	document.getElementById("layout_components").appendChild(new CardSmallCollection(query,{width:"200px",text:false}))
+	document.getElementById("loader_components").remove();
+}
+
 setTimeout(tutorials_load,1000)
 setTimeout(popular_load,1500)
+setTimeout(components_load,1500)
 
 
 async function keplr() {

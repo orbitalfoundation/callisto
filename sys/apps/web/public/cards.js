@@ -6,6 +6,7 @@ export class CardSmall extends HTMLElement {
 		this.update(item)
 	}
 	async update(item) {
+		let text = this.config ? this.config.text : true;
 		let width = this.config && this.config.width ? this.config.width : "100%";
 		this.item = item
 		this.id = item ? item.uuid : 0
@@ -14,10 +15,12 @@ export class CardSmall extends HTMLElement {
 			return
 		}
 		this.innerHTML =
-			`<a style="
-				display:flex;
-				margin: 16px 0 16px 0;
+			`<div style="
+				float:left;
+				position:relative;
+				margin: 16px 16px 16px 0px;
 				padding:4px;
+				width: ${width};
 				background:#fffff8;
 				border-radius:3px;
 				xborder:3px solid #e0e0e0;
@@ -26,27 +29,35 @@ export class CardSmall extends HTMLElement {
 				"
 				onMouseOver="this.style.transform='scale(1.05)'"
 				onMouseOut="this.style.transform='scale(1.0)'"
-				href="${item.url}"
 				>
-					<div style="
-						flex: 1;
-						border:1px solid #e0e0e0;
-						background-image: url(${item.art});
-						background-size: cover;
-						background-repeat: no-repeat;
-						background-position: center center;
-						border-radius: 3%;
-						">
-					</div>
-					<div style="
-						flex: 4;
-						padding: 0 8px 0 8px;
-						color:black;
-						">
-						<h3>${item.label}</h3>
-						<h4/>${item.about}</h4>
-					</div>
-			</a>`
+					<a style="
+					display:flex;
+					"
+					href="${item.url}"
+					>
+						<div style="
+							flex: 1;
+							min-height: 100px;
+							border:1px solid #e0e0e0;
+							background-image: url(${item.art});
+							background-size: cover;
+							background-repeat: no-repeat;
+							background-position: center center;
+							border-radius: 3%;
+							">
+						</div>
+						${ text ?
+						`<div style="
+							flex: 4;
+							padding: 0 8px 0 8px;
+							color:black;
+							">
+							<h3>${item.label}</h3>
+							<h4/>${item.about}</h4>
+						</div>` : "" }
+					</a>
+					<div style="color:black">${item.info?item.info:''}</div>
+			</div>`
 	}
 }
 
@@ -54,9 +65,10 @@ customElements.define('card-small', CardSmall )
 window.CardSmall = CardSmall
 
 export class CardSmallCollection extends HTMLElement {
-	constructor(query) {
+	constructor(query,config) {
 		super()
 		this.query = query
+		this.config = config
 	}
 	connectedCallback() {
 		this.query.observe( this.observer.bind(this) )
@@ -97,7 +109,7 @@ export class CardSmallCollection extends HTMLElement {
 					}
 					// has to be created
 					else {
-						candidate = new CardSmall(item)
+						candidate = new CardSmall(item,this.config)
 					}
 					// place
 					this.insertBefore(candidate,elem)
@@ -109,7 +121,7 @@ export class CardSmallCollection extends HTMLElement {
 			if(!limit || this.children.length < limit) {
 				let candidate = this.querySelector(`#${item.uuid}`)
 				if(candidate) return // it did exist but it is newer
-				this.appendChild(new CardSmall(item))
+				this.appendChild(new CardSmall(item,this.config))
 			}
 
 		})
