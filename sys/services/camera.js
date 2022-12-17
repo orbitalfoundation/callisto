@@ -4,13 +4,12 @@ const enableWebcamButton = document.getElementById('webcamButton');
 
 export default class Camera {
 
-	constructor(args) {
-		if(args) {
-			this.uid = args.uid
-			this.uuid = args.uuid
-			this.service_uuid = args.service_uuid
-			this.urn = args.urn
-			this._pool = args._pool
+	constructor(blob) {
+
+		if(!blob || !blob.client) {
+			let err = "camera: must have a client handler supplied"
+			console.error(err)
+			throw err
 		}
 
 		let getUserMediaSupported = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
@@ -25,7 +24,7 @@ export default class Camera {
 				navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
 					video.srcObject = stream
 					video.addEventListener('loadeddata', (results) => {
-						args.client.resolve({video})
+						blob.client.resolve({video})
 					})
 				})
 			})
@@ -33,8 +32,5 @@ export default class Camera {
 
 	}
 
-	async resolve(args) {
-
-	}
 }
 

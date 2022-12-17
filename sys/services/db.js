@@ -1,256 +1,88 @@
 
-export default class DB {
+class DBSingleton {
 
-	constructor(args) {
-		if(args) {
-			this.uid = args.uid
-			this.uuid = args.uuid
-			this.urn = args.urn
-			this._pool = args._pool
-		}
-		this.routes = []
-		this.storage = {}
+	storage = {}
 
-		if(args && args.server) {
-			this.server = args.server
-			this.server.route(this) // send inbound traffic to db
-			console.log("db is a server")
-			return
-		}
-
-		if(args && args.client) {
-			this.client = args.client
-			this.client.route(this) // send inbound traffic to db
-			console.log("db is a client")
-			return
-		}
-
-		// have database run behaviors on a timer for now
-		setInterval(this.update.bind(this),10)
-
+	constructor() {
+		this.merge = this.merge.bind(this)
 	}
 
-	route(args) {
-		this.routes.push(args)
-	}
+	/// a helper to process scene graphs
 
-	async resolve(args) {
-
-		if(!args) throw "db: no args"
-
-		if(args.server || args.client) {
-			// ignore these config props for now- todo improve
-			return
-		}
-
-		if(!args.data) {
-			// all remaining packets should be mundane commands
-			console.error("db: bad data")
-			console.log(args)
-			return
-		}
-
-		if(args.data.synchronize) {
-			// got a request to sync - this is a server side only command
-			if(this.server) {
-				let values = Object.values(this.storage)
-				console.log("db resolve: server is sending all data - obj count is " + values.length)
-				this.server.resolve({data:values,socket:args.socket})
-			}
-			return
-		}
-
-		// otherwise assume it is data - merge it
-		this.merge(args.data,false)
-	}
-
-	synchronize() {
-		// start syncing
-		// - if is a client then tell server to specially send everything
-		if(this.client) {
-			this.client.resolve({data:{synchronize:true}})
-		}
-	}
-
-	///
-	/// Can ingest individual items, arrays or trees
-	/// Also stuffs a domain in front - TODO this needs more study
-	/// Flattens trees and turns their enumeration of child objects into an enumeration of keys
-	///
-
-	async merge(data,local=true,domain="") {
-		await this._fragment_recurse(data,local,domain)
-	}
-
-	async _fragment_recurse(fragment,local=true,domain="") {
+	unroll(fragment,changelist=[]) {
 
 		// a convenience feature for arrays
 		if(Array.isArray(fragment)) {
 			for(const frag of fragment) {
-				await this._fragment_recurse(frag,local)
+				this.unroll(frag,changelist)
 			}
 			return
 		}
 
-		// bad fragment?
+		// fragment must always have a uuid
 		if(!fragment || !fragment.uuid) {
-			console.error("db: bad fragment?")
-			console.log(fragment)
+			let err = "db: bad fragment?"
+			console.error(fragment)
 			return
+//			throw err
 		}
 
-		// children is a convenience concept not actually stored in db - pull it out
-		let children = fragment.children
+		// children is a convenience concept not actually stored in db - remove from the data itself
+		let children = fragment.children || null
 		delete fragment.children
 
-		// save fragment itself
-		await this._fragment_merge(fragment,local)
+		// push fragment
+		changelist.push(fragment)
 
-		// as a convenience concept flatten children with citation of parent AND rename children
-		// TODO this entire concept could be perhaps moved up to user land as a cleanup function?
+		// as a convenience concept flatten children with citation of parent AND optionally rename children
 		if(children) {
+			let counter = 1;
 			for(const child of children) {
 				child.parent_uuid = fragment.uuid
-				child.uuid = `${fragment.uuid}/${child.id}`
-				await this._fragment_recurse(child,local)
-			}
-		}
-
-	}
-
-	async _fragment_merge(fragment,local=true) {
-
-		let current = {}
-
-		// merge with previous?
-		let prev = this.storage[fragment.uuid]
-		if(prev) {
-			let updated = fragment.updated || 0
-			// discard if specifically marked as older
-			if(parseInt(prev.updated) > updated ) {
-				console.log("db: ignoring old frag " + fragment.uuid + " because " + prev.updated + " > " + updated )
-				return
-			}
-			// update fields - note this does not handle field deletions altogether
-			for (const [key, value] of Object.entries(fragment)) {
-				prev[key] = value
-			}
-			current = prev
-			current.updated = Date.now()
-		}
-
-		// else save fresh
-		else {
-
-			// set fields
-			for (const [key, value] of Object.entries(fragment)) {
-				current[key] = value
-			}
-
-			// set created/updated
-			current.updated = Date.now()
-			current.created = current.created ? current.created : current.updated
-
-			// store each item
-			this.storage[current.uuid]=current
-			//console.log("db: remembering " + current.uuid)
-		}
-
-		// deal with associated behaviors
-		await this.load_ecs(current)
-
-		// playing with various ways to network dirty state
-		// in this approach networking is a special route and i can do fine-grained decisions therefore
-
-		// echo traffic to other observers (aside from network)
-		// note - trying an idea of only writing vetted traffic to observers such as the view
-//		if(current.authoritative || current.speculative_networking) {
-//			if(current.speculative_networking && this.routes.length) {
-//				console.log("db: allowing speculative echo of " + current.uuid)
-//			}
-			for(const route of this.routes) {
-				//console.log("db: sending to routes " + current.uuid)
-				await route.resolve({data:current})
-			}
-//		}
-
-		// if this db is a client and the data was not from a server then send it to the server
-		if(this.client && !current.authoritative) {
-//			this.client.resolve({data:current})
-		}
-
-		// mark as authoritative or not
-		current.authoritative = this.server ? true : false
-
-		// if this is a server then send changes to the client
-		// technically i could track what each client already has and not send existing state - TODO
-		if(this.server) {
-			console.log("sending to client " + current.uuid)
-//			this.server.resolve({data:current})
-		}
-
-	}
-
-	// although i have a generic pool manager outside the db - i want a performant ecs system inside the db
-	handlers = {
-	}
-
-	async load_ecs(node) {
-
-		// any behaviors?
-		if(!node.ecs) return
-
-		// associate each
-		for(let path of node.ecs) {
-			let handler = this.handlers[path]
-			if(!handler) {
-				let blob = await import(path)
-				if(!blob) {
-					console.error("db: cannot load ecs " + path)
-					return
+				if(!child.uuid) {
+					child.uuid = `${fragment.uuid}/${child.id||counter}`
 				}
-				// make it
-				let construct = blob.default
-				if(!(construct instanceof Function)) {
-					console.error("db: bad agent" + path)
-					return
-				}
-				handler = new construct(this)
-				handler.nodes = []
-				this.handlers[path] = handler
+				counter++
+				this.unroll(child,changelist)
 			}
-			handler.nodes.push(node) // todo - must pop on delete
 		}
 
+		return changelist
 	}
 
-	async update() {
+	merge(fragment) {
 
+		// what time is this insertion desired at?
+		let updated = fragment.updated ? parseInt(fragment.updated) : 0
 
-		// visit all handlers and pass each one all nodes
+		// find previous if any
+		let node = this.storage[fragment.uuid] || {}
 
-		for(let handler of Object.values(this.handlers)) {
-			if(handler.update) {
-				handler.update(this,handler.nodes)
-			}
+		// typically old data is totally ignored unless there is a rule to not ignore it
+		if(node.updated && node.updated > updated && !fragment.UPDATEALWAYS) {
+			return node
 		}
 
-		// for now mark and sweep dirty nodes to publish
-		// TODO rather than doing a merge on data that is already 'in' the db just write to the listeners
-		// TODO later i think the data itself could mark which routes to publish to? revisit nov 15 2022
-
-		for(let node of Object.values(this.storage)) {
-			if(node.dirty) {
-				node.updated = Date.now()
-				delete node.dirty
-				for(const route of this.routes) {
-					//console.log("db: sending to routes " + current.uuid)
-					await route.resolve({data:node})
-				}
-
-			}
+		// merge fields - for now does not support deletions - todo improve
+		for (const [key, value] of Object.entries(fragment)) {
+			node[key] = value
 		}
 
+		// set updated at
+		node.updated = Date.now()
+
+		// set created if not set
+		if(!node.created) {
+			node.created = node.updated
+		}
+
+		// store
+		this.storage[node.uuid]=node
+
+		console.log("db: saved node",node.kind,node.uuid)
+
+		// return item
+		return node
 	}
 
 	queryFastByUuid(uuid) {
@@ -259,85 +91,160 @@ export default class DB {
 		return item ? [item] : []
 	}
 
-	queryFastByHash(args) {
+	queryFastByHash(fragment) {
 		// this is intended to be an in ram query with no await
 		let matches = []
 		for(let item of Object.values(this.storage)) {
 			let match = true
-			for(let [key,value] of Object.entries(args)) {
-				if(args[key] != item[key]) match = false
+			for(let [key,value] of Object.entries(fragment)) {
+				if(fragment[key] != item[key]) match = false
 			}
 			if(match) matches.push(item)
 		}
 		return matches
 	}
-}
 
-/*
-
-
-let db_indexed = {}
-let db_created = {}
-let db_updated = {}
-
-const onewayCompare = (obj1, obj2) => Object.keys(obj1).every(key => obj2.hasOwnProperty(key) && obj1[key] === obj2[key] )
-
-///
-/// more sophisticated merge tests
-///
-
-function db_merge(changes) {
-	// must be valid change list
-	let uuid = changes ? changes.uuid : 0
-	if(!uuid) return 0
-	// must have contributed some change to the global state
-	let prev = db_indexed[uuid]
-	if(prev && onewayCompare(changes,prev)) return 0
-	// set created and updated
-	db_updated[uuid]=Date.now()
-	if(!db_created[uuid]) db_created[uuid]=db_updated[uuid]
-	// do a merge
-	let merged = db_indexed[uuid] = { ...(prev?prev:{}),...changes}
-	// return whole set
-	return merged
-}
-
-///
-/// A query may be one hash to match or an array of hashes to match
-/// If an uuid is passed then always ONLY matches on that UUID
-/// Results are always returned as an array
-///
-
-function db_query(queries) {
-	let results = []
-	if(queries) {
-		if(!Array.isArray(queries)) queries = [queries]
-		queries.forEach(match=>{
-			delete match.offset
-			delete match.limit
-			delete match.event
-			delete match.orderby
-			console.log(match)
-			data.forEach(item=>{
-				let success = true
-				for (const [k,v] of Object.entries(match)) {
-					if(item[k] != v) {
-						success = false;
-						break;
-					}
-				}
-				if(success) {
-					results.push(item)
-				}
-			})
-		})
+	destroy(fragment) {
+		let nodes = []
+		if(fragment.uuid) {
+			nodes = this.queryFastByUuid(fragment.uuid)
+		} else {
+			nodes = this.queryFastByHash(fragment)
+		}
+		for(const node of nodes) {
+			delete this.storage[node.uuid]
+		}
+		return {status:"success"}
 	}
-	return results
+
 }
 
+let DB = new DBSingleton();
 
+///
+/// A caller created instance; which has its own caller related routes
+///
 
-*/
+export default class DBInstance {
 
+	// if this is not set then typically this service is a singleton - only one would ever be built by pool
+	MULTIPLYINSTANCED = true;
+
+	constructor(blob) {
+		if(blob) {
+			this.uid = blob.uid
+			this.uuid = blob.uuid
+			this.urn = blob.urn
+			this.pool = blob.pool
+		}
+		this.routes = []
+
+		// sanity check
+		if(!this.pool || !this.pool.uuid || !this.urn) {
+			let err = "db: must have some kind of local pool uuid and service urn to help disambiguate where data originates from"
+			console.error(err)
+			throw err
+		}
+
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	///
+	/// route()
+	///
+	/// accumulate a list of handlers
+	///
+	///////////////////////////////////////////////////////////////////////////////////////
+
+	route(route) {
+		if(typeof route === 'object' && route.resolve) {
+			this.routes.push(route.resolve.bind(route))
+		} else if(typeof route === 'function') {
+			this.routes.push(route)
+		} else {
+			let err = "net: bad route"
+			console.error(err)
+			throw err
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	///
+	/// Handle a variety of commands from outside world - results will eventually echo out through routes
+	///
+	/// Expected format is a single command (does not handle arrays of commands):
+	///
+	///		{
+	///			command: "query" or "destroy" or "write"
+	///			data: {object} or [ {object},{object},{object} ]
+	///		}
+	///
+	//////////////////////////////////////////////////////////////////////////////////////
+
+	async resolve(blob) {
+		if(!blob) {
+			let err = "db: no args"
+			console.error(err)
+			throw err
+		}
+		switch(blob.command || "default") {
+			case 'sync':
+				// force write a copy of all state to all parties; this could be more elegant todo
+				this.write(Object.values(DB.storage))
+				break
+			case 'query':
+				if(blob.data.uuid) {
+					return DB.queryFastByUuid(blob.data.uuid)
+				} else {
+					return DB.queryFastByHash(blob.data)
+				}
+			case 'destroy':
+				return DB.destroy(blob.data)
+			case 'write':
+			case 'default':
+			default:
+				return this.write(blob.data,blob.socketid)
+		}
+	}
+
+	queryFastByUuid(query) { return DB.queryFastByUuid(query) }
+	queryFastByHash(query) { return DB.queryFastByHash(query) }
+
+	///
+	/// destroy()
+	///
+	/// TODO TBD - publish events to local listeners
+	///
+
+	destroy(query) { return DB.destroy(query) }
+
+	///
+	/// write()
+	///
+	/// write data to db but also echo local events to local listeners
+	///
+
+	async write(data,socketid=0) {
+
+		// unroll data
+		let changelist = []
+		DB.unroll(data,changelist)
+
+		// write items to db
+		changelist.forEach(DB.merge)
+
+		// build a formal message - go out of our way to remember the socket id
+		let blob = {
+			socketid:socketid || 0,
+			urn:this.urn,
+			command:"write",
+			data:changelist
+		}
+
+		// echo to listeners
+		for(const route of this.routes) route(blob)
+	}
+
+}
 
 

@@ -4,19 +4,78 @@ import "/sys/libs/babylonjs.loaders.min.js"
 import "/sys/libs/babylon.gui.js"
 // import "/sys/cannon.js"
 
-class ViewSingleton {
+export default class View {
+
+	constructor(args) {
+		if(args) {
+			this.uid = args.uid
+			this.uuid = args.uuid
+			this.urn = args.urn
+		}
+		this.routes = []
+		this.resolve = this.resolve.bind(this)
+
+		this.setup()
+
+		this._fragment_merge = this._fragment_merge.bind(this)
+		this.resolve = this.resolve.bind(this)
+	}
+
+	///
+	/// resolve a scene graph
+	///
+	/// if a starting scene does not exist then one will be generated
+	///
+	/// any node can be in any scene - set the parent scene at will with .scene = parent scene name
+	///
+	/// although other services can parse scene graphs with children nodes, this expects a linear array
+	///
+
+	resolve(blob) {
+
+		// it is possible that we are getting a structured object - pick it apart
+		if(typeof blob === 'object' && blob.data) {
+			blob = blob.data
+		}
+
+		// it is possible that we are getting an array of objects
+		if(Array.isArray(blob)) {
+			blob.forEach(this._fragment_merge)
+		} else {
+			this._fragment_merge(blob)
+		}
+	}
+
+	///
+	/// accumulate listeners for keyboard events and picking and so on
+	///
+
+	route(route) {
+		this.routes.push(route)
+	}
+
+	_echo(node) {
+		this.routes.forEach(route=>{
+			// TBD
+			//route.resolve(input)
+		})
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////
 
 	canvas = 0;
 	engine = 0;
 	scenes = [];
-	viewers = [];
+	scenes_indexed = {}
 	babylon_nodes = {};
 	PHYSICS = false;
 
-	constructor() {
+	setup() {
 
+		// it's easiest to produce this ourselves rather than rely on outside parties to do it
 		this.canvas = document.createElement("canvas")
 		//this.canvas.style.cssText += 'position:absolute;top:0;'
+
 		const resize = () => {
 			this.canvas.width = window.innerWidth
 			this.canvas.height = window.innerHeight
@@ -36,8 +95,36 @@ class ViewSingleton {
 
 		window.addEventListener("resize",this.engine.resize.bind(this.engine))
 
-		this.register_handlers()
+		window.addEventListener("click", (evt) => {
+			this.scenes.forEach(scene => {
+				var pickResult = scene.pick(evt.clientX, evt.clientY)
+				if(pickResult && pickResult.pickedMesh && pickResult.pickedMesh) {
+
+					// climb up to pickable or fail
+					let node = pickResult.pickedMesh
+					for(;node;node=node.parent) {
+						if(node.fragment && node.fragment.pickable) break
+					}
+
+					// publish picking event
+					if(node && node.fragment && node.fragment.pickable && node._context_handle) {
+
+console.log("view: pick event happened " + node.uuid)
+
+//						let view = node._context_handle
+//						view.routes.forEach(route => {
+//							route.resolve({event:"pick",fragment:node.fragment})						
+//						})
+
+					}
+				}
+
+			})
+
+		})
+
 	}
+
 
 	create_scene(fragment) {
 
@@ -46,6 +133,8 @@ class ViewSingleton {
 		if(this.scenes.length) scene.autoClear = false
 
 		this.scenes.push(scene)
+
+		this.scenes_indexed[scene.uuid] = scene
 
 		if(this.PHYSICS) {
 			let physicsPlugin = new BABYLON.CannonJSPlugin()
@@ -86,7 +175,7 @@ class ViewSingleton {
 		camera.setTarget(lookat)
 
 		// arc rotate can be set this way too - and this may be better
-		camera.setPosition(xyz)
+		camera.position = xyz
 
 		// remember this for ourselves
 		scene.camera = camera
@@ -140,7 +229,6 @@ class ViewSingleton {
 			case "directionallight":
 			case "directionalight":
 				light = new BABYLON.DirectionalLight(fragment.uuid,dir,scene)
-				console.log("made light")
 				break
 			case "spotlight":
 				light = new BABYLON.HemisphericLight(fragment.uuid,xyz,dir,fragment.angle||1,fragment.exponent||2,scene)
@@ -203,39 +291,55 @@ class ViewSingleton {
 			//mat.specularColor = new BABYLON.Color3(1,1,1) // specular highlights
 			//mat.emissiveColor = new BABYLON.Color3(1,1,1) // self lit
 			//mat.ambientColor = new BABYLON.Color3(1,1,1)
-			// TODO use alpha from here!
-			if(fragment.alpha) mat.alpha = fragment.alpha
 		}
+
+		if(fragment.alpha) mat.alpha = fragment.alpha
 
 		if(fragment.emissive) {
-			let a = ((fragment.rgba >> 24) & 0xff) / 256.0
-			let r = ((fragment.rgba >> 16) & 0xff) / 256.0
-			let g = ((fragment.rgba >> 8) & 0xff) / 256.0
-			let b = ((fragment.rgba) & 0xff) / 256.0
-			mat.emissiveColor = new BABYLON.Color3(r,g,b) // self lit			
+			let a = ((fragment.emissive >> 24) & 0xff) / 256.0
+			let r = ((fragment.emissive >> 16) & 0xff) / 256.0
+			let g = ((fragment.emissive >> 8) & 0xff) / 256.0
+			let b = ((fragment.emissive) & 0xff) / 256.0
+			mat.emissiveColor = new BABYLON.Color3(r,g,b) // self 
 		}
 
-		// todo deal with texture
+		if(fragment.specular) {
+			let a = ((fragment.specular >> 24) & 0xff) / 256.0
+			let r = ((fragment.specular >> 16) & 0xff) / 256.0
+			let g = ((fragment.specular >> 8) & 0xff) / 256.0
+			let b = ((fragment.specular) & 0xff) / 256.0
+			mat.specularColor = new BABYLON.Color3(r,g,b) // self lit
+		}
+
+		if(fragment.ambient) {
+			let a = ((fragment.ambient >> 24) & 0xff) / 256.0
+			let r = ((fragment.ambient >> 16) & 0xff) / 256.0
+			let g = ((fragment.ambient >> 8) & 0xff) / 256.0
+			let b = ((fragment.ambient) & 0xff) / 256.0
+			mat.ambientColor = new BABYLON.Color3(r,g,b) // self lit
+		}
+
+		// todo deal with texture magic
 
 		if(fragment.art) {
 			mat.diffuseTexture = new BABYLON.Texture(fragment.art,scene)
 			mat.diffuseTexture.uScale = 1
 			mat.diffuseTexture.vScale = 1
-			if(fragment.alpha) mat.alpha = fragment.alpha
-			mat.specularColor = new BABYLON.Color3(0, 0, 0)
+			if(!fragment.specular)mat.specularColor = new BABYLON.Color3(0, 0, 0)
 		}
 
-		// deal with dynamic material
+		if(!fragment.children) {
+			return mat
+		}
 
-		if(!fragment.children) return mat
+		// deal with magical materials with embeddable text
+		// deal with 2d elements - children if any
+		// (In Orbital I want materials to be richer than merely dumb surfaces - this explores that idea)
 
 		var texture = new BABYLON.DynamicTexture("dynamic texture", {width:512, height:256},scene)
 		var context = texture.getContext()
 		
 		mat.diffuseTexture = texture;
-
-		// deal with 2d elements - children if any
-		// (In Orbital I want materials to be richer than merely dumb surfaces - this explores that idea)
 
 		fragment.children.forEach(child=>{
 			switch(child.kind) {
@@ -262,6 +366,7 @@ class ViewSingleton {
 		var near = new BABYLON.GUI.NearMenu("near");
 		manager.addControl(near);
 
+// xxx todo examine better - seems kind of a hassle to get this right
 //near.maxViewVerticalDegrees
 //near.maxViewHorizontalDegrees to tweak these bounds.
 near.defaultDistance = 10
@@ -303,21 +408,13 @@ near.defaultDistance = 10
 		elem.background = "black";
 		ux.addControl(elem);   		
 
-		// TODO refine console keyboard a bit
+		// on carriage return echo the text back to observers blindly
 		elem.onKeyboardEventProcessedObservable.add((input) => {
 			if(input.keyCode == 13 && input.shiftKey == false) {
-				this.viewers.forEach(view=>{
-					input.event = "console"
-					input.text = `${elem.text}`
-					elem.text = ""
-
-					view.routes.forEach(route => {
-						route.resolve(input)
-					})
-
-				})
+				this._echo({command:"key",keyCode:input.keyCode,text:`${elem.text}`,uuid:fragment.uuid})
+				elem.text = ""
 			}
-		});
+		})
 
 		return new BABYLON.TransformNode(uuid,scene)
 	}
@@ -510,19 +607,27 @@ near.defaultDistance = 10
 				recurse(mesh)
 			}
 
-			// pull out navigation info if desired
+			/*
+			// pull out navigation info if desired - this is some test code
 			let results = []
-			//this.scan_navmesh(mesh,results)
+			this.scan_navmesh(mesh,results)
 
-			// make bidir
+			// make these bi-directional
 			if(results.length) {
 				this.bidir(results)
 				console.log(JSON.stringify(results))
 			}
+			*/
 
 		})
 		return node
 	}
+
+	/*
+
+	this was a navigation experiment - it needs some more thinking
+	can this be done in database instead? can database have enough introspection?
+	should these be generated outside the app and loaded?
 
 	bidir(results) {
 		let hashed = {}
@@ -578,6 +683,7 @@ near.defaultDistance = 10
 
 		return collection
 	}
+	*/
 
 	create_sound(fragment,scene) {
 
@@ -615,7 +721,7 @@ near.defaultDistance = 10
 		let art = fragment.art
 		switch(fragment.kind) {
 			case "scene": return this.create_scene(fragment)
-			case "sound": return this.create_sound(fragment)
+			case "sound": return this.create_sound(fragment,scene)
 			case "textarea": return this.create_text(fragment,scene)
 			case "ground":
 			case "box": return this.create_box(fragment,scene)
@@ -637,20 +743,30 @@ near.defaultDistance = 10
 	///
 	/// apply changes from fragment to node
 	///
+	/// a concept of a context handle allows me to recover which users artifacts are being set for picking
+	///
 	/// TODO these could and should be optimized to only revise more carefully on actual changes
 	///
 
-	babylon_sdl(fragment,view) {
+	_fragment_merge(fragment,context_handle=0) {
 
-		// TODO actually allow arbitrary scene please
-		let scene = fragment.scene ? this.scenes[1] : this.scenes[0]
-
-		// get uuid of node
-		let uuid = fragment ? fragment.uuid : 0
-		if(!uuid) {
-			console.error("view: illegal fragment no uuid?")
+		if(!fragment || !fragment.uuid) {
+			let err = "view: bad fragment"
+			console.error(err)
 			console.error(fragment)
-			return 0
+			throw err
+		}
+
+		let uuid = fragment.uuid
+
+		// find scene to apply fragment to
+		let scene = null
+		if(fragment.scene) {
+			scene = this.scenes_indexed[fragment.scene]
+		} else {
+			if(this.scenes.length) {
+				scene = this.scenes[0]
+			}
 		}
 
 		// get babylon node matching uuid if any
@@ -669,14 +785,19 @@ near.defaultDistance = 10
 				console.log(fragment)
 				return null
 			}
+			if(fragment.kind != "scene" && scene == null) {
+				console.warn("view: no scene - forcing one to exist")
+				let name = fragment.scene ? fragment.scene : "scene"
+				scene = this.create_node({uuid:name,kind:"scene",network:false})
+			}
 			node = this.babylon_nodes[uuid] = this.create_node(fragment,scene)
 			if(!node) {
 				console.error("view: could not make node " + fragment.uuid)
-				return 0
+				return null
 			}
 			node.kind = fragment.kind
 			node.uuid = node.id = uuid
-			node._view_backhandle = view
+			//node._context_handle = view
 			//console.log("view: spawned node uuid=" + uuid)
 		} else {
 			//console.log("view: updated node uuid=" + uuid)
@@ -706,25 +827,24 @@ near.defaultDistance = 10
 			}
 		}
 
-		// TODO note that scene nodes can fall through this - and there is no scene in some cases then
+		// update props
+		this._update_props(node,fragment,scene)
 
-		// revise material?
+		// update our state tracking
+		node.fragment = fragment
+
+		return node
+	}
+
+	_update_props(node,fragment,scene) {
+
+		if(fragment.kind == "scene") return
+
 		// TODO at the moment this logic is not sensitive to subtle material changes
 		if(fragment.material && !fragment.material_was_updated) {
 			fragment.material_was_updated = 1
 			node.material = this.babylon_material(fragment.material,scene)
 		}
-
-	// TODO aug 2022
-	// - there is a network bug here
-	// - if the server gets a fresh join
-	// - then those objects appear here again
-	// - and if there is physics they will pop
-	// - ways to deal with this
-	//		- server could not re-publish objects that did not change at all; it could understand view networking or just basic state cache
-	//		- we can tell that objects have physics and should not be updating here
-	//		- we can mark up objects
-	//
 
 		// revise rotation?
 		if(fragment.ypr && node.rotation && !(node.rotation.x == fragment.ypr[0] && node.rotation.y == fragment.ypr[1] && node.rotation.z==fragment.ypr[2])) {
@@ -752,19 +872,11 @@ near.defaultDistance = 10
 			// todo - this is a bit of a hack to operate directly on the camera - it should ideally be node set target
 			if(!node.setTarget) {
 				console.error("node is not a camera??? " + node.kind + " " + node.uuid)
-				console.log(node)
+				console.error(node)
 			} else {
 				node.setTarget(new BABYLON.Vector3(...fragment.lookat))
 			}
 			node.lookat = fragment.lookat
-		}
-
-		// seek to target if no physics
-		// todo don't pop but instead interpolate
-		if(fragment.impulse && !node.physics) {
-			node.position.x += fragment.impulse[0]
-			node.position.y += fragment.impulse[1]
-			node.position.z += fragment.impulse[2]
 		}
 
 		if(this.PHYSICS) {
@@ -795,123 +907,19 @@ near.defaultDistance = 10
 			}
 		}
 
-		// update our state tracking
-		node.fragment = fragment
-
-		return node
 	}
 
-	register_handlers() {
-
-		window.addEventListener("click", (evt) => {
-
-			this.scenes.forEach(scene => {
-
-
-				var pickResult = scene.pick(evt.clientX, evt.clientY)
-
-				if(pickResult && pickResult.pickedMesh && pickResult.pickedMesh) {
-
-					// climb up to pickable or fail
-					let node = pickResult.pickedMesh
-					for(;node;node=node.parent) {
-						if(node.fragment && node.fragment.pickable) break
-					}
-
-					// publish picking event
-					if(node && node.fragment && node.fragment.pickable && node._view_backhandle) {
-						let view = node._view_backhandle
-						view.routes.forEach(route => {
-							route.resolve({event:"pick",fragment:node.fragment})						
-						})
-					}
-				}
-
-			})
-
-		})
-
-	}
-
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-/// View Instance Helper
-///
-/// This is performing several roles:
-///
-/// + It pretends to be a rust/wasm service that is only accessible over a socket or message channel - ie: an asynchronous arms length relationship.
-///
-/// + It receives commands or requests with a 'load' of a scene graph - this will be painted or updated persistently to a display. This is the key role.
-///
-/// + The design intent is that important events such as mouse movement or touch events can be piped back to a caller if they specify an event return channel.
-///
-/// + If this is written well, it should be swappable for a native rust/wasm or other rasterizer and event handler.
-///
-/// + Although this class is multiply instanced, there is only one actual view.
-///
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-let view = 0;
-
-export default class View {
-
-	///
-	/// peel out useful fields but ignore any .command in the args - this will be passed to us later
-	///
-	constructor(args) {
-		this.uid = args.uid
-		this.uuid = args.uuid
-		this.urn = args.urn
-		this._pool = args._pool
-		this.nodes = []
-		this.routes = []
-
-		this.resolve = this.resolve.bind(this)
-
-		if(!view) view = new ViewSingleton();
-
-		view.viewers.push(this)
-	}
-
-	async resolve(args) {
-		if(args && args.command == "load" || args.data) {
-			// if data is set this is enough information to decide this is data
-			this.fragment_recurse(args.data)
-		} else {
-			let err = "View: not valid command"
-			console.error(err)
-			console.error(args)
-			throw(err)
+	/*
+	interpolate(node,fragment,scene) {
+		// TBD improve
+		// seek to target if no physics
+		// todo don't pop but instead interpolate
+		if(fragment.impulse && !node.physics) {
+			node.position.x += fragment.impulse[0]
+			node.position.y += fragment.impulse[1]
+			node.position.z += fragment.impulse[2]
 		}
-	}
+	}*/
 
-	route(route) {
-		this.routes.push(route)
-	}
 
-	fragment_recurse(fragment) {
-
-		// special support for arrays as a convenience feature - only useful for root node
-		if(Array.isArray(fragment)) {
-			fragment.forEach(child=>{
-				this.fragment_recurse(child)
-			})
-			return
-		}
-
-		if(!fragment || !fragment.uuid) {
-			console.error("view: bad fragment")
-			console.log(fragment)
-			console.log(JSON.stringify(fragment))
-			return
-		}
-
-		// render the one node
-		view.babylon_sdl(fragment,this)
-
-		// remember fragments
-		this.nodes[fragment.uuid]=fragment
-	}
 }

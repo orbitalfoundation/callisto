@@ -1,20 +1,18 @@
 
 export default class CV {
 
-	constructor(args) {
+	constructor(blob) {
 
-		if(args) {
-			this.uid = args.uid
-			this.uuid = args.uuid
-			this.service_uuid = args.service_uuid
-			this.urn = args.urn
-			this._pool = args._pool
+		if(!blob || blob.client) {
+			let err ="cv: must have a client"
+			console.error(err)
+			throw err
 		}
 
 		this.predict.bind(this)
 
 		this.model = 0
-		this.client = args.client
+		this.client = blob.client
 
 		cocoSsd.load().then((loadedModel) => {
 			this.model = loadedModel;
@@ -28,11 +26,11 @@ export default class CV {
 
 	}
 
-	resolve(args) {
-		if(args && args.video) {
+	resolve(blob) {
+		if(blob && blob.video) {
 			// once camera sends us data once - then feed the model
 			console.log("cv: got video frame buffer handle from camera once")
-			this.video = args.video
+			this.video = blob.video
 			this.predict()
 		}
 	}

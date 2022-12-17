@@ -19,9 +19,10 @@
 	"engines": {
 		"node": ">=12.0.0"
 	},
-	"main": "./sys/apps/web/server.js",
+	"main": "./sys/apps/webserver/webserver.js",
 	"scripts": {
-		"start": "node ./sys/apps/web/server.js"
+		"start": "node ./sys/apps/webserver/webserver.js",
+		"test": "node --no-warnings ./sys/tests/tests.js"
 	},
 	"dependencies": {
 		"@cosmjs/cosmwasm-stargate": "^0.29.3",

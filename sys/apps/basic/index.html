@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Orbital</title>
+</head>
+<body></body>
+</html>
+
+<script type="module">
+
+// calculate a path to our current folder for convenience
+let urn = (new URL(import.meta.url)).pathname; urn = "*:"+urn+(urn.split("/").at(-2))
+
+// update title of page
+document.title = 'Orbital App at ' + urn
+
+// get a pool manager
+import Pool from '/sys/services/pool.js'
+let pool = new Pool()
+
+// load the app
+pool.fetch({urn})
+
+</script>

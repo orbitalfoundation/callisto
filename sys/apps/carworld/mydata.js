@@ -1,12 +1,10 @@
 
-// Scene setup:
+// Scene setup given camera pos:
 //
 // X goes from smaller on the left to larger on the right
 // Y is larger going up
 // Z is positive into the screen
 // -x <----> +x
-// Camera is placed at a negative position
-// I have some ambient lighting, and a directional light that is shining down and to the right
 //
 
 let mycamera = {

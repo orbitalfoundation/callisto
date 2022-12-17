@@ -8,63 +8,101 @@ import { fileURLToPath } from 'url';
 
 export default class Http {
 
-	constructor(args) {
+	constructor(blob) {
 
 		// peel out a few useful args
-		if(args) {
-			this.uid = args.uid
-			this.uuid = args.uuid
-			this.urn = args.urn
-			this._pool = args._pool
-			this.resources = args.resources || 0
-			this.port = args.port || 8080
+		if(blob) {
+			this.uid = blob.uid
+			this.uuid = blob.uuid
+			this.urn = blob.urn
+			this.pool = blob.pool
+			let a = blob.blob
+			this.resources = a ? a.resources : []
+			this.port = a ? a.port : 8080
 			console.log("HTTP: system uuid is: " + this.uuid + " with resources at: " + this.resources )
 		}
 
 		this._initialize()
 	}
 
+	getHttpServer() {
+		return this.http
+	}
+
 	_initialize() {
-		if(this.app) return
 
 		// start expressjs
 		this.app = express()
 		this.http = http.createServer(this.app)
 
-		// json
+		// always use json
 		this.app.use(express.json())
 
-		// serve the entire orbital folder as the root of http
-		if(typeof process !== 'undefined') {
-			let orbital_resources = process.cwd()
-			this.app.use(express.static(orbital_resources))
-			console.log("HTTP: serving orbital resources under path = " + orbital_resources)
-		}
+		// serve desired folders
 
-		// serve a local folder for secondary resources - these get clobbered by other paths above
-		if(this.resources) {
-			let web_resources = dirname(fileURLToPath(this.resources)) + "/public";
-			this.app.use(express.static(web_resources))
-			console.log("HTTP: serving clobberable web specific resources at path = " + web_resources )
+		for(let r of this.resources) {
+
+			if(r.startsWith("file://")) {
+				r = dirname(fileURLToPath(this.resources))
+			}
+
+			this.app.use(express.static(r))
 		}
 
 		// always serve this file as the index by default (actually this does not have to be explicitly set)
 		//app.get('/', (req, res) => { res.sendFile(app_files + '/index.html') })
 
-		// catch other unresolved paths
+		// catch other unresolved paths ... appears that this can be added first
 		this.app.use(function(err, req, res, next) {
-			console.log("http: cannot find file!")
+			console.error("http: cannot find resource ",req)
 			console.error(err)
 			next(err)
 		})
+
+		this.start()
 	}
 
-	runforever() {
-		// run forever
+	async start() {
 		console.log("HTTP: running http server on port " + this.port)
 		this.http.listen(this.port)
 	}
 
-	async resolve(args) {}
+	///
+	/// route()
+	///
+	/// http routes are a bit different from usual, they require a channel (an object with a .resolve method) and a url to attach to
+	///
+
+	route(route=null,path=null) {
+		if(!route || !path) {
+			let err = "http: must specify a filter"
+			console.error(err)
+			throw err
+		}
+
+		if(typeof route === 'object' && route.resolve) {
+			route = route.resolve.bind(route)
+		} else if(typeof route === 'function') {
+			// fine
+		} else {
+			let err = "http: bad route"
+			console.error(err)
+			throw err
+		}
+
+		this.app.post(path, async (req,res) => {
+			try {
+				let json = await route(req.body)
+				res.json(json)
+			} catch(err) {
+				console.error(err)
+				return res.json({err})
+			}
+		})
+	}
+
+	async resolve(command) {
+		// this service doesn't do anything with traffic directly sent to it yet 
+	}
 }
 
