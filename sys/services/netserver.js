@@ -41,14 +41,18 @@ export default class NetServer {
 
 	route(route) {
 		if(typeof route === 'object' && route.resolve) {
-			this.routes.push(route.resolve.bind(route))
+			route = route.resolve.bind(route)
+			this.routes.push(route)
+			return route
 		} else if(typeof route === 'function') {
 			this.routes.push(route)
+			return route
 		} else {
 			let err = "net: bad route"
 			console.error(err)
 			throw err
 		}
+		return null
 	}
 
 	///

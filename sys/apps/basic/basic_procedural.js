@@ -2,7 +2,7 @@
 
 /*
 
-This is a simple multiplayer demo showing off basic scripting in typical scenarios.
+This is a procedural way to define a simple multiplayer demo showing off basic scripting in typical scenarios.
 
 Generally the flow is something like this:
 
@@ -47,7 +47,7 @@ To improve:
 
 */
 
-import { myscene, myavatar } from './basic_scene.js'
+import { myscene, myavatar } from './basic_sdl.js'
 
 export default class MyBasicApp {
 
@@ -85,11 +85,17 @@ export default class MyBasicApp {
 		// traffic from local db is sent to network; there is some loopback prevention in the net logic
 		db.route(net)
 
-		// push some starting state to the database
+		// push some starting state to the database by hand
 		await db.write(myscene)
 
-		// make a local avatar controller - ideally after avatar is loaded
-		this.pool.fetch({urn:"*:/sys/apps/agents/avatar_agent",avatar_uuid,db})
+		// make a local avatar controller
+		this.pool.fetch({
+			urn:"*:/sys/apps/agents/avatar_agent",
+			uuid: "/myusername/apps/basic001/my_agent",
+			dest:"/myusername/apps/basic001/mydb",
+			command:"route",
+			data: myavatar,
+		},
 
 		// ask the server db to publish a fresh copy of all state back to us
 		net.resolve({urn:"*:/sys/services/db",command:"sync"})

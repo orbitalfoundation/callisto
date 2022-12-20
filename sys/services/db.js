@@ -79,7 +79,7 @@ class DBSingleton {
 		// store
 		this.storage[node.uuid]=node
 
-		console.log("db: saved node",node.kind,node.uuid)
+		// console.log("db: saved node",node.kind,node.uuid)
 
 		// return item
 		return node
@@ -152,20 +152,24 @@ export default class DBInstance {
 	///
 	/// route()
 	///
-	/// accumulate a list of handlers
+	/// accumulate a list of handlers - return our interpretation of the naked function
 	///
 	///////////////////////////////////////////////////////////////////////////////////////
 
 	route(route) {
 		if(typeof route === 'object' && route.resolve) {
-			this.routes.push(route.resolve.bind(route))
+			route = route.resolve.bind(route)
+			this.routes.push(route)
+			return route
 		} else if(typeof route === 'function') {
 			this.routes.push(route)
+			return route
 		} else {
 			let err = "net: bad route"
 			console.error(err)
 			throw err
 		}
+		return 0
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -188,9 +192,23 @@ export default class DBInstance {
 			throw err
 		}
 		switch(blob.command || "default") {
+			case 'route':
+				{
+
+					let service = await this.pool.fetch({uuid:blob.dest})
+					if(service) {
+						let route = this.route(service)
+						this._echo_one(route,Object.values(DB.storage))
+					} else {
+						let err = "db: cannot route"
+						console.error(blob)
+						throw err
+					}
+					return null
+				}
 			case 'sync':
 				// force write a copy of all state to all parties; this could be more elegant todo
-				this.write(Object.values(DB.storage))
+				this._echo(Object.values(DB.storage))
 				break
 			case 'query':
 				if(blob.data.uuid) {
@@ -222,9 +240,10 @@ export default class DBInstance {
 	/// write()
 	///
 	/// write data to db but also echo local events to local listeners
+	/// todo -> at the moment i explicitly pass socket info from the parent blob down here and pass it thru to help network
 	///
 
-	async write(data,socketid=0) {
+	write(data,socketid=0) {
 
 		// unroll data
 		let changelist = []
@@ -233,16 +252,19 @@ export default class DBInstance {
 		// write items to db
 		changelist.forEach(DB.merge)
 
-		// build a formal message - go out of our way to remember the socket id
-		let blob = {
+		// echo to each
+		for(const route of this.routes) {
+			this._echo_one(route,changelist,socketid)
+		}
+	}
+
+	_echo_one(route,data,socketid=0) {
+		route({
 			socketid:socketid || 0,
 			urn:this.urn,
 			command:"write",
-			data:changelist
-		}
-
-		// echo to listeners
-		for(const route of this.routes) route(blob)
+			data
+		})
 	}
 
 }

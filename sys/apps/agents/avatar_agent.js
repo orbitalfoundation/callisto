@@ -4,29 +4,16 @@ import "/sys/libs/babylon.js"
 
 export default class Avatar {
 
+	db = 0
+	avatar = 0
+
 	constructor(blob) {
-		if(!blob || !blob.blob || !blob.blob.db) {
-			let err = "avatar: needs to have a db channel"
-			console.error(err)
-			throw err
-		}
-		if(typeof document === 'undefined') {
-			let err = "avatar: should run on client not server"
-			console.error(err)
-			throw err
-		}
-
-		this.avatar_uuid = blob.blob.avatar_uuid
-		this.db = blob.blob.db
-		document.addEventListener("keydown",this.apply.bind(this))
-
-		// hack - force an initial update - also the vector is slightly different otherwise for arcrotatecamera only
-		this.apply({key:"t"})
+		this.pool = blob ? blob.pool : 0
 	}
 
 	apply(args) {
 
-		let nodes = this.db.queryFastByUuid(this.avatar_uuid)
+		let nodes = this.db.queryFastByUuid(this.avatar.uuid)
 		if(!nodes || !nodes.length) {
 			console.warn("Avatar: not found")
 			return
@@ -83,4 +70,46 @@ export default class Avatar {
 			this.db.write(camera)
 		}
 	}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	///
+	/// resolve()
+	///
+	///////////////////////////////////////////////////////////////////////////////////////
+
+	latch = 0
+
+	async resolve(blob) {
+
+		// only handle the one command to setup the avatar
+		if(this.latch) return
+		this.latch = 1
+
+		// client only
+		if(typeof document === 'undefined') {
+			let err = "avatar: should run on client not server"
+			console.error(err)
+			throw err
+		}
+
+		// must have db
+		this.db = await this.pool.fetch({uuid:blob.dest})
+		if(!this.db) {
+			let err = "avatar: requires db"
+			throw err
+		}
+
+		// must have avatar
+		this.avatar = blob.data
+		this.avatar.uuid += this.pool.uuid + "_network"
+
+		// write avatar to db once
+		await this.db.write(this.avatar)
+
+		// bind controls and also a hack to force an initial update - also the vector is slightly different otherwise for arcrotatecamera only
+		document.addEventListener("keydown",this.apply.bind(this))
+		this.apply({key:"t"})
+
+	}
+
 }

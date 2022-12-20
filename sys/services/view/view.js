@@ -36,6 +36,9 @@ export default class View {
 		// it is possible that we are getting a structured object - pick it apart
 		if(typeof blob === 'object' && blob.data) {
 			blob = blob.data
+		} else {
+			//console.warn("view: no data")
+			return
 		}
 
 		// it is possible that we are getting an array of objects

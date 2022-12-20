@@ -19,7 +19,10 @@ document.title = 'Orbital App at ' + urn
 import Pool from '/sys/services/pool.js'
 let pool = new Pool()
 
-// load the app
-pool.fetch({urn})
+// fetch the app from an sdl
+import { myapp } from './basic_sdl.js'
+
+// load the app purely as a declaration
+pool.resolve(myapp)
 
 </script>

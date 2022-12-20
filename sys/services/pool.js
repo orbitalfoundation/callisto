@@ -56,10 +56,9 @@ export default class Pool extends Factory {
 		if(Array.isArray(blob)) {
 			let results = []
 			for(let c of blob) {
-				results.push(this.resolve(c))
+				await this.resolve(c)
 			}
-			let values = await Promise.all(results)
-			return values
+			return
 		}
 
 		// sanity test
@@ -70,9 +69,10 @@ export default class Pool extends Factory {
 			throw err
 		}
 
-		// try find/make the service by urn or uuid and then call resolve on it - returning the promise itself to caller
+		// get service
 		let handler = await this.fetch(blob)
 		if(handler && handler.resolve && handler.resolve instanceof Function) {
+			// always pass contents to resolve - may be ignored - return the promise
 			return handler.resolve(blob)
 		}
 
