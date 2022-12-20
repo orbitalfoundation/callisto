@@ -30,7 +30,7 @@ let popular_data = [
 		art:"/sys/images/carla.png",
 		about:"Cars, Pedestrians and Streetlights simulation",
 	},
-
+/*
 	{
 		uuid:"AR Desktop",
 		label:"AR Desktop",
@@ -38,19 +38,12 @@ let popular_data = [
 		art:"/sys/images/arux.jpg",
 		about:"Exploring an AR based UX",
 	},
-
-	{
-		uuid:"Zone Picker",
-		label:"Zone Picker",
-		url:"/sys/apps/zonepicker",
-		art:"/sys/images/zonepicker.png",
-		about:"A globe for picking other areas to visit"
-	},
+*/
 
 	{
 		uuid:"Cloud Reef",
 		label:"Cloud Reef",
-		url:"/sys/apps/worldpicker",
+		url:"/sys/apps/cloudreef",
 		art:"/sys/images/reef.jpg",
 		about:"Reef Ecosystem and Habitat Explorer"
 	},
@@ -62,6 +55,14 @@ let popular_data = [
 		url:"/sys/apps/venice",
 		about:"Digital twin of Venice",
 		info:"Pedestrian Agent"
+	},
+
+	{
+		uuid:"Zone Picker",
+		label:"Zone Picker",
+		url:"/sys/apps/zonepicker",
+		art:"/sys/images/zonepicker.png",
+		about:"A globe for picking other areas to visit"
 	},
 
 ]
