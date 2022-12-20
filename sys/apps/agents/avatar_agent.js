@@ -58,14 +58,18 @@ export default class Avatar {
 			console.warn("avatar: no camera")
 		} else {
 
+			let cameraxyz = node.cameraxyz ? node.cameraxyz : [0,2,-5]
+
 			// put camera behind translation target
-			vec = new BABYLON.Vector3(0,2,-10).rotateByQuaternionToRef(rot,BABYLON.Vector3.Zero())
+			vec = new BABYLON.Vector3(...cameraxyz).rotateByQuaternionToRef(rot,BABYLON.Vector3.Zero())
 			vec.x += xyz[0]
 			vec.y += xyz[1]
 			vec.z += xyz[2]
 
+			let lookat = [ xyz[0], xyz[1], xyz[2] ]
+
 			camera.xyz = [vec.x,vec.y,vec.z]
-			camera.lookat = xyz
+			camera.lookat = lookat
 			//camera.dirty = camera.updated = Date.now()
 			this.db.write(camera)
 		}
@@ -81,8 +85,6 @@ export default class Avatar {
 
 	async resolve(blob) {
 
-console.log("avatar resolve called")
-
 		// only handle the one command to setup the avatar
 		if(this.latch) return
 		this.latch = 1
@@ -95,7 +97,7 @@ console.log("avatar resolve called")
 		}
 
 		// must have db
-		this.db = await this.pool.fetch({uuid:blob.dest})
+		this.db = await this.pool.resolve({uuid:blob.dest})
 		if(!this.db) {
 			let err = "avatar: requires db"
 			throw err
@@ -104,6 +106,9 @@ console.log("avatar resolve called")
 		// must have avatar
 		this.avatar = blob.data
 		this.avatar.uuid += this.pool.uuid + "_network"
+
+		// randomize avatar
+		//this.avatar.art = Math.random() < 0.5 ?  "/sys/assets/anime_villager/scene.gltf" : "/sys/assets/anime_child/scene.gltf"
 
 		// write avatar to db once
 		await this.db.write(this.avatar)

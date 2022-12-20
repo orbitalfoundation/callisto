@@ -22,17 +22,17 @@ import Pool from '#orbital/sys/services/pool.js'
 let pool = new Pool({server:true,uuid})
 
 // get http service and build a post api route to the pool channel
-let http = await pool.fetch({urn:"*:/sys/services/http",port,resources})
+let http = await pool.resolve({urn:"*:/sys/services/http",port,resources})
 http.route(pool,"/sys/services/pool")
 
 // build a server side database as a convenience for the demos
 if(true) {
 
 	// get long sockets net service and route all traffic to the pool channel also
-	let net = await pool.fetch({urn:"*:/sys/services/netserver"})
+	let net = await pool.resolve({urn:"*:/sys/services/netserver"})
 
 	// get server db as a convenience utility for remote clients
-	let db = await pool.fetch({urn:'*:/sys/services/db'})
+	let db = await pool.resolve({urn:'*:/sys/services/db'})
 
 	// route all traffic from net to the pool or to db... either way is the same
 	net.route(db)

@@ -24,6 +24,22 @@ export default class Pool extends Factory {
 		}
 	}
 
+	routes = []
+
+	///
+	/// it doesn't really make sense to try listen to the pool... but anyway
+	///
+
+	route(route) {
+		if(typeof route === 'object' && route.resolve) {
+			route = route.resolve.bind(route)
+			this.routes.push(route)
+		}
+		let err = "pool: bad route"
+		console.error(err)
+		throw err
+	}
+
 	///
 	/// resolve(command={}||[{},{},{}])
 	///
@@ -70,7 +86,7 @@ export default class Pool extends Factory {
 		}
 
 		// get service
-		let handler = await this.fetch(blob)
+		let handler = await this._fetch(blob)
 
 		// always pass contents to resolve - may be ignored - return the promise
 		if(handler && handler.resolve && handler.resolve instanceof Function) {

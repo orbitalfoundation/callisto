@@ -9,7 +9,7 @@ export default class NetClient {
 			this.pool = blob.pool
 		}
 		this.routes = []
-		this.filters = []
+		this.filters = ["network"] // hack - later allow people to supply their own 
 		this.loading = this._run_client()
 	}
 
@@ -26,7 +26,7 @@ export default class NetClient {
 		// inbound data is echoed to all local listeners
 		socket.on('data', data => {
 			data.socketid = socket.id
-			for(let handler of this.routes) handler(data)
+			for(let route of this.routes) route.resolve(data)
 		})
 	}
 
@@ -38,18 +38,13 @@ export default class NetClient {
 
 	route(route) {
 		if(typeof route === 'object' && route.resolve) {
-			route = route.resolve.bind(route)
 			this.routes.push(route)
-			return route
-		} else if(typeof route === 'function') {
-			this.routes.push(route)
-			return route
 		} else {
-			let err = "net: bad route"
-			console.error(err)
+			let err = "db: bad route"
+			console.error(error)
+			console.error(route)
 			throw err
 		}
-		return null
 	}
 
 
@@ -77,7 +72,7 @@ export default class NetClient {
 		switch(blob.command || "default") {
 			case 'route':
 				{
-					let service = await this.pool.fetch({uuid:blob.dest})
+					let service = await this.pool.resolve({uuid:blob.dest})
 					if(service) {
 						let route = this.route(service)
 						console.log("net todo should echo cached objs!") // if net comes up before this route then must do this
@@ -95,14 +90,19 @@ export default class NetClient {
 			case "default":
 			case "write":
 			default:
+			console.log(1)
 				// todo - decide if this is the right place and time to care about objects or if it should be up to the user
 				if(blob.data) {
 					let changelist = []
 					for(let item of blob.data) {
-						for(let f of this.filters) {
-							if(item.uuid.endsWith(f)) {
-								changelist.push(item)
-								break
+						if(!this.filters || !this.filters.length) {
+							changelist.push(item)
+						} else {
+							for(let f of this.filters) {
+								if(item.uuid.includes(f)) {
+									changelist.push(item)
+									break
+								}
 							}
 						}
 					}

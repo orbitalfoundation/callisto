@@ -11,7 +11,7 @@ export default class NetServer {
 
 	async _run_server() {
 		console.log("NET: started as server")
-		let http = await this.pool.fetch({urn:"*:/sys/services/http",DONOTCREATE:true})
+		let http = await this.pool.resolve({urn:"*:/sys/services/http",DONOTCREATE:true})
 		if(!http) {
 			let err = "net: http must exist"
 			console.error(err)
@@ -28,7 +28,7 @@ export default class NetServer {
 		socket.on('data', data => {
 			data.socketid = socket.id
 			for(let route of this.routes) {
-				route(data)
+				route.resolve(data)
 			}
 		})
 	}
@@ -41,18 +41,13 @@ export default class NetServer {
 
 	route(route) {
 		if(typeof route === 'object' && route.resolve) {
-			route = route.resolve.bind(route)
 			this.routes.push(route)
-			return route
-		} else if(typeof route === 'function') {
-			this.routes.push(route)
-			return route
 		} else {
-			let err = "net: bad route"
-			console.error(err)
+			let err = "db: bad route"
+			console.error(error)
+			console.error(route)
 			throw err
 		}
-		return null
 	}
 
 	///

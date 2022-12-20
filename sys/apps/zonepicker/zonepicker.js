@@ -1,8 +1,6 @@
 
 import { myscene } from './zonepicker_sdl.js'
 
-import "/sys/libs/babylon.js"
-
 export default class MyApp {
 
 	constructor(args) {

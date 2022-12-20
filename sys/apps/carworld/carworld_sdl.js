@@ -8,67 +8,60 @@
 //
 
 let mycamera = {
-	uuid: "camera1",
-	//viewable: {  // -> may be more clear to break out components into separate blocks and associate with ecs
-		kind: "camera",
-		arcrotatecamera: true,
-		latitude: 0,
-		longitude: -Math.PI/2,
-		radius: 20,
-		//xyz: [0,15,-15],
-		xyz: [0,300,20],
-		lookat: [0,0,0],
-		radiusmin: 2,
-		radiusmax: 500,
-		//universal: true, // type of mouse control
-	//},
-	//ecs: [ "/sys/services/view/view.js" ]
+	uuid: "/myusername/apps/basic001/scene/camera1",
+	kind: "camera",
+	universal: true,
+	latitude: 0,
+	longitude: -Math.PI/2,
+	radius: 20,
+	//xyz: [0,15,-15],
+	xyz: [0,300,20],
+	lookat: [0,0,0],
+	radiusmin: 2,
+	radiusmax: 500,
 }
 
-let mylight = {
-	uuid: "lights",
+let mylights = {
+	uuid: "/myusername/apps/basic001/scene/lights",
 	kind: "group",
 	children: [
 		{
-			id: "light1",
+			id: "/myusername/apps/basic001/scene/light1",
 			kind: "directionallight", // "light", "pointlight", "spotlight", "hemisphericlight",
 			xyz: [0,0,0],  // set if this is a point light
 			dir: [0,-1,-1], // set if this is directional
 			//angle: 1, // field of illumination angle for spotlight
 			//exponent: 2, // decay for spotlight 
-			intensity: 7.0,
+			intensity: 2.0,
 		},
 		{
-			id: "light2",
+			id: "/myusername/apps/basic001/scene/light2",
 			kind: "hemisphericlight", // "light", "pointlight", "spotlight", "hemisphericlight",
 			//xyz: [0,0,0],  // set if this is a point light
 			//dir: [0,-1,-1], // set if this is directional
 			//angle: 1, // field of illumination angle for spotlight
 			//exponent: 2, // decay for spotlight 
-			intensity: 10.0,
+			intensity: 2.0,
 		},
 	]
 }
 
 let myavatar = {
-	uuid: "avatar1",
+	uuid: "/myusername/apps/basic001/scene/myavatar_network",
 	camera: "camera1",
-	//viewable: { // -> then view can be sent each of these rather than the whole obj
-		kind: "gltf",
-		art: "/sys/assets/female.glb",
-		adjust: {xyz:[0,0,0],ypr:[0,3.1459,0]},
-		whd: [1,1,1],
-		xyz: [-7.5,0,2.5],
-		ypr: [0,0,0],
-		pickable: true,
-	//},
-	ecs: [ "/sys/apps/base/avatar.js" ]
+	kind: "gltf",
+	art: "/sys/assets/anime_villager/scene.gltf",
+	adjust: {xyz:[0,0,0],ypr:[0,3.1459,0]},
+	whd: [1,1,1],
+	xyz: [3,0,3],
+	ypr: [0,0,0],
+	pickable: true,
 }
 
 let myperson ={
 
 	//viewable: {
-		uuid:"person1",
+		uuid:"/myusername/apps/basic001/scene/person1",
 		kind:"gltf",
 		art: "/sys/assets/female.glb",
 		adjust: {xyz:[0,0,0],ypr:[0,1.14159,0]},
@@ -104,20 +97,20 @@ let myperson ={
 }
 
 let mycity = {
-	uuid:"city",
+	uuid:"/myusername/apps/basic001/scene/city",
 	kind:"gltf",
 	art: "/sys/assets/blendercity2.glb",
 }
 
 let mysound = {
-	id:"horn",
+	id:"/myusername/apps/basic001/scene/horn",
 	uuid:"horn",
 	kind:"sound",
 	art: '/sys/assets/horn.wav'
 }
 
 let vehicle1 = {
-	uuid:"vehicle1",
+	uuid:"/myusername/apps/basic001/scene/vehicle1",
 	kind:"gltf",
 	art: "/sys/assets/sedan.glb",
 	xyz: [0,0,0],
@@ -128,7 +121,7 @@ let vehicle1 = {
 }
 
 let vehicle2 = {
-	uuid:"vehicle2",
+	uuid:"/myusername/apps/basic001/scene/vehicle2",
 	kind:"gltf",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
@@ -138,7 +131,7 @@ let vehicle2 = {
 }
 
 let vehicle3 = {
-	uuid:"vehicle3",
+	uuid:"/myusername/apps/basic001/scene/vehicle3",
 	kind:"gltf",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
@@ -148,7 +141,7 @@ let vehicle3 = {
 }
 
 let vehicle4 = {
-	uuid:"vehicle4",
+	uuid:"/myusername/apps/basic001/scene/vehicle4",
 	kind:"gltf",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
@@ -158,7 +151,7 @@ let vehicle4 = {
 }
 
 let vehicle5 = {
-	uuid:"vehicle5",
+	uuid:"/myusername/apps/basic001/scene/vehicle5",
 	kind:"gltf",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
@@ -168,7 +161,7 @@ let vehicle5 = {
 }
 
 let vehicle6 = {
-	uuid:"vehicle6",
+	uuid:"/myusername/apps/basic001/scene/vehicle6",
 	kind:"gltf",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
@@ -178,7 +171,7 @@ let vehicle6 = {
 }
 
 let vehicle7 = {
-	uuid:"vehicle7",
+	uuid:"/myusername/apps/basic001/scene/vehicle7",
 	kind:"gltf",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
@@ -188,7 +181,7 @@ let vehicle7 = {
 }
 
 let vehicle8 = {
-	uuid:"vehicle8",
+	uuid:"/myusername/apps/basic001/scene/vehicle8",
 	kind:"gltf",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
@@ -198,7 +191,7 @@ let vehicle8 = {
 }
 
 let vehicle9 = {
-	uuid:"vehicle9",
+	uuid:"/myusername/apps/basic001/scene/vehicle9",
 	kind:"gltf",
 	art: "/sys/assets/sedan.glb",
 	xyz: [ 0,0,-10 ],
@@ -208,35 +201,11 @@ let vehicle9 = {
 }
 
 
-let mydata = [
-
-	// mandatory atm - todo remove as mandatory element
-	{ uuid:"scene1", kind:"scene", },
-
-	// mandatory atm
-	mycamera,
-
-	// required for shadows
-	mylight,
-
-	// entire city in one go
-	mycity,
-
-	// avatar itself
-	myavatar,
-
-	// a person, and their representation
-	myperson,
-
-	vehicle1,
-	vehicle2,
-	vehicle4,
-	vehicle5,
-	vehicle6,
-	vehicle7,
-	vehicle8,
-	vehicle9,
-]
+let myscene = {
+	kind: "scene",
+	uuid: "/myusername/apps/basic001/scene",
+	children: [ mycamera, mylights, mycity, vehicle1, vehicle2, vehicle3 ]
+}
 
 /*
 	// some poi
@@ -299,5 +268,5 @@ let mydata = [
 */
 
 
-export default mydata
+export { myscene, myavatar }
 

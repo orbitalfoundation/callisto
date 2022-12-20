@@ -22,7 +22,6 @@ let mylight2 = {
 	intensity: 2.0,
 }
 
-
 let mylights = {
 	uuid: "/myusername/apps/basic001/lights",
 	kind: "group",
@@ -36,15 +35,11 @@ let myground = {
 	physics:{shape:"box",mass:0},
 	xyz:[0,0,0],
 	whd:[0.01,0.01,0.01],
-//	whd:[400,400,400],
-//	recenter: true,
-//	rescale: true,
     art: "/sys/assets/venice.glb",
 }
 
 let myavatar = {
 	uuid: "/myusername/apps/basic001/myavatar_network",
-	avatar: true,
 	camera: "/myusername/apps/basic001/camera1",
 	kind: "gltf",
 	art: "/sys/assets/anime_villager/scene.gltf",
@@ -52,7 +47,6 @@ let myavatar = {
 	whd: [1,1,1],
 	xyz: [-4,0.5,-4],
 	ypr: [0,3.7,0],
-	pickable: true,
 }
 
 let myscene = {

@@ -25,7 +25,7 @@ let popular_data = [
 
 	{
 		uuid:"CarWorld",
-		label:"Car World",
+		label:"Car Sim",
 		url:"/sys/apps/carworld",
 		art:"/sys/images/carla.png",
 		about:"Cars, Pedestrians and Streetlights simulation",

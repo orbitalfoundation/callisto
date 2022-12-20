@@ -130,7 +130,7 @@ export default class Factory {
 	///			- especially when we support making clones of canonical services with unique uuids
 	///
 
-	async fetch(blob) {
+	async _fetch(blob) {
 
 		// sanity check
 		if(!blob || typeof blob !== 'object') {

@@ -43,7 +43,6 @@ let myground = {
 
 let myavatar = {
 	uuid: "/myusername/apps/basic001/myavatar_network",
-	avatar: true,
 	camera: "/myusername/apps/basic001/camera1",
 	kind: "gltf",
 	art: "/sys/assets/anime_villager/scene.gltf",
@@ -51,7 +50,6 @@ let myavatar = {
 	whd: [1,1,1],
 	xyz: [13,0.5,13],
 	ypr: [0,4,0],
-	pickable: true,
 }
 
 let myscene = {

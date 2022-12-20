@@ -49,7 +49,6 @@ let mybox1 = {
 
 let myavatar = {
 	uuid: "/myusername/apps/basic001/myavatar_network",
-	avatar: true,
 	camera: "/myusername/apps/basic001/camera1",
 	kind: "gltf",
 	art: "/sys/assets/anime_villager/scene.gltf",
@@ -57,7 +56,6 @@ let myavatar = {
 	whd: [1,1,1],
 	xyz: [0,0,0],
 	ypr: [0,0,0],
-	pickable: true,
 }
 
 let myscene = {
@@ -103,12 +101,10 @@ let myapp = [
 	// setup networking
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	// make a network and tack in some filtering on traffic - filter can be a function
+	// make a network
 	{
 		urn: "*:/sys/services/netclient",
 		uuid: "/myusername/apps/basic001/mynet",
-		command: "filter",
-		data:{filter:["network"]},
 	},
 
 	// wire db traffic -> net

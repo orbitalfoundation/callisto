@@ -159,18 +159,13 @@ export default class DBInstance {
 
 	route(route) {
 		if(typeof route === 'object' && route.resolve) {
-			route = route.resolve.bind(route)
 			this.routes.push(route)
-			return route
-		} else if(typeof route === 'function') {
-			this.routes.push(route)
-			return route
 		} else {
-			let err = "net: bad route"
-			console.error(err)
+			let err = "db: bad route"
+			console.error(error)
+			console.error(route)
 			throw err
 		}
-		return 0
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -195,11 +190,13 @@ export default class DBInstance {
 		switch(blob.command || "default") {
 			case 'route':
 				{
-
-					let service = await this.pool.fetch({uuid:blob.dest})
+					// find it
+					let service = await this.pool.resolve({uuid:blob.dest})
 					if(service) {
-						let route = this.route(service)
-						this._echo_one(route,Object.values(DB.storage))
+						// remember
+						this.route(service)
+						// sync
+						this._echo_one(service,Object.values(DB.storage))
 					} else {
 						let err = "db: cannot route"
 						console.error(blob)
@@ -264,11 +261,11 @@ export default class DBInstance {
 	}
 
 	_echo_one(route,data,socketid=0) {
-		route({
+		route.resolve({
 			socketid:socketid || 0,
 			urn:this.urn,
 			command:"write",
-			data
+			data:data
 		})
 	}
 

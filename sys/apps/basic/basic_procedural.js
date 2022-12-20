@@ -48,9 +48,6 @@ export default class MyBasicApp {
 
 	constructor(blob) {
 
-		this.uuid = blob.uuid ? blob.uuid : "local"
-		console.log("Basic demo app starting with uuid="+this.uuid)
-
 		// remember pool
 		this.pool = blob.pool
 
@@ -59,20 +56,17 @@ export default class MyBasicApp {
 
 	async init() {
 
-		// adjust the uuid for the avatar so that it is unique over network
-		let avatar_uuid = myavatar.uuid += this.pool.uuid
-
 		// make a channel to a local db that is shared between users
-		let db = await this.pool.fetch({urn:'*:/sys/services/db'})
+		let db = await this.pool.resolve({urn:'*:/sys/services/db',uuid:"/myusername/apps/basic001/mydb"})
 
 		// make a channel to a local view that is shared between users
-		let view = await this.pool.fetch({urn:"*:/sys/services/view/view"})
+		let view = await this.pool.resolve({urn:"*:/sys/services/view/view"})
 
 		// forward all of our own database writes to the view
 		db.route(view)
 
 		// make a network traffic channel
-		let net = await this.pool.fetch({urn:"*:/sys/services/netclient"})
+		let net = await this.pool.resolve({urn:"*:/sys/services/netclient"})
 
 		// traffic from network is sent to local db
 		net.route(db)
@@ -81,19 +75,21 @@ export default class MyBasicApp {
 		db.route(net)
 
 		// push some starting state to the database by hand
-		await db.write(myscene)
+		db.write(myscene)
 
 		// make a local avatar controller
-		this.pool.fetch({
+		this.pool.resolve({
 			urn:"*:/sys/apps/agents/avatar_agent",
 			uuid: "/myusername/apps/basic001/my_agent",
 			dest:"/myusername/apps/basic001/mydb",
 			command:"route",
 			data: myavatar,
-		},
+		})
 
 		// a bit of a hack - ask the server db to publish a fresh copy of all state back to us
 		net.resolve({urn:"*:/sys/services/db",command:"sync"})
 	}
 
 }
+
+
