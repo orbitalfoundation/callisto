@@ -55,7 +55,7 @@ export default class Avatar {
 		let cameras = this.db.queryFastByUuid(node.camera)
 		let camera = cameras.length ? cameras[0] : 0
 		if(!camera) {
-			console.warning("avatar: no camera")
+			console.warn("avatar: no camera")
 		} else {
 
 			// put camera behind translation target
@@ -80,6 +80,8 @@ export default class Avatar {
 	latch = 0
 
 	async resolve(blob) {
+
+console.log("avatar resolve called")
 
 		// only handle the one command to setup the avatar
 		if(this.latch) return
