@@ -39,13 +39,52 @@ let mylights = {
 }
 
 let mybox1 = {
-	uuid:"/myusername/apps/basic001/box1_network",
+	uuid:"/myusername/apps/basic001/box1",
 	kind:"box",
 	xyz:[0,0,0],
 	whd:[1,0.01,1],
 	ypr:[0,0,0],
 	material: { rgba:0xff0000ff, emissive:0xffff0000, alpha:1.0 },
 }
+
+let mytree1 = {
+	uuid:"/myusername/apps/basic001/tree1",
+	kind:"gltf",
+	art: "/sys/assets/crystal1/scene.gltf",
+	xyz:[3,1,5],
+	whd:[1,1,1],
+	ypr:[0,0,0],
+}
+
+let mytree2 = {
+	uuid:"/myusername/apps/basic001/tree2",
+	kind:"gltf",
+	art: "/sys/assets/cherrytree/scene.gltf",
+	xyz:[0,5.3,0],
+	whd:[13,17,13],
+	ypr:[-0.5,0,0],
+	rescale:true,
+	recenter:true,
+}
+
+let mytree3 = {
+	uuid:"/myusername/apps/basic001/tree3",
+	kind:"gltf",
+	art: "/sys/assets/man1.glb",
+	xyz:[-2,0,2],
+	whd:[1,1,1],
+	ypr:[0,2,0],
+}
+
+let mytree4 = {
+	uuid:"/myusername/apps/basic001/tree4",
+	kind:"gltf",
+	art: "/sys/assets/crystal2/scene.gltf",
+	xyz:[0,1,5],
+	whd:[1,1,1],
+	ypr:[0,0,0],
+}
+
 
 let myavatar = {
 	uuid: "/myusername/apps/basic001/myavatar_network",
@@ -61,7 +100,7 @@ let myavatar = {
 let myscene = {
 	uuid: "/myusername/apps/basic001/scene",
 	kind: "scene",
-	children: [ mycamera, mylights, mybox1 ],
+	children: [ mycamera, mylights, mytree1, mytree2, mytree3, mytree4 ],
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

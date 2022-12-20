@@ -48,7 +48,7 @@ let mylights = {
 
 let myavatar = {
 	uuid: "/myusername/apps/basic001/scene/myavatar_network",
-	camera: "camera1",
+	camera: "/myusername/apps/basic001/scene/camera1",
 	kind: "gltf",
 	art: "/sys/assets/anime_villager/scene.gltf",
 	adjust: {xyz:[0,0,0],ypr:[0,3.1459,0]},
@@ -110,7 +110,7 @@ let mysound = {
 }
 
 let vehicle1 = {
-	uuid:"/myusername/apps/basic001/scene/vehicle1",
+	uuid:"/myusername/apps/basic001/scene/vehicle1_network",
 	kind:"gltf",
 	art: "/sys/assets/sedan.glb",
 	xyz: [0,0,0],
@@ -121,7 +121,7 @@ let vehicle1 = {
 }
 
 let vehicle2 = {
-	uuid:"/myusername/apps/basic001/scene/vehicle2",
+	uuid:"/myusername/apps/basic001/scene/vehicle2_network",
 	kind:"gltf",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],

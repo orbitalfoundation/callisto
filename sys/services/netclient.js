@@ -90,7 +90,6 @@ export default class NetClient {
 			case "default":
 			case "write":
 			default:
-			console.log(1)
 				// todo - decide if this is the right place and time to care about objects or if it should be up to the user
 				if(blob.data) {
 					let changelist = []
