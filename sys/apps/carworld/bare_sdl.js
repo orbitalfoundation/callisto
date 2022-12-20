@@ -99,7 +99,7 @@ let myperson ={
 let mycity = {
 	uuid:"/myusername/apps/basic001/scene/city",
 	kind:"gltf",
-	art: "/sys/assets/xxx.glb",
+	art: "/sys/assets/blendercity2.glb",
 }
 
 let mysound = {
@@ -112,10 +112,10 @@ let mysound = {
 let vehicle1 = {
 	uuid:"/myusername/apps/basic001/scene/vehicle1_network",
 	kind:"gltf",
+	subkind: "vehicle",
 	art: "/sys/assets/sedan.glb",
 	xyz: [0,0,0],
 	ypr: [0,0,0],
-	ecs: [ "/sys/apps/carworld/vehicle.js" ],
 	collide: 1000,
 	children: [ mysound ]
 }
@@ -123,80 +123,80 @@ let vehicle1 = {
 let vehicle2 = {
 	uuid:"/myusername/apps/basic001/scene/vehicle2_network",
 	kind:"gltf",
+	subkind: "vehicle",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
 	ypr: [0,0,0],
-	ecs: [ "/sys/apps/carworld/vehicle.js" ],
 	collide: 1000,
 }
 
 let vehicle3 = {
 	uuid:"/myusername/apps/basic001/scene/vehicle3",
 	kind:"gltf",
+	subkind: "vehicle",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
 	ypr: [0,0,0],
-	ecs: [ "/sys/apps/carworld/vehicle.js" ],
 	collide: 1000,
 }
 
 let vehicle4 = {
 	uuid:"/myusername/apps/basic001/scene/vehicle4",
 	kind:"gltf",
+	subkind: "vehicle",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
 	ypr: [0,0,0],
-	ecs: [ "/sys/apps/carworld/vehicle.js" ],
 	collide: 1000,
 }
 
 let vehicle5 = {
 	uuid:"/myusername/apps/basic001/scene/vehicle5",
 	kind:"gltf",
+	subkind: "vehicle",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
 	ypr: [0,0,0],
-	ecs: [ "/sys/apps/carworld/vehicle.js" ],
 	collide: 1000,
 }
 
 let vehicle6 = {
 	uuid:"/myusername/apps/basic001/scene/vehicle6",
 	kind:"gltf",
+	subkind: "vehicle",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
 	ypr: [0,0,0],
-	ecs: [ "/sys/apps/carworld/vehicle.js" ],
 	collide: 1000,
 }
 
 let vehicle7 = {
 	uuid:"/myusername/apps/basic001/scene/vehicle7",
 	kind:"gltf",
+	subkind: "vehicle",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
 	ypr: [0,0,0],
-	ecs: [ "/sys/apps/carworld/vehicle.js" ],
 	collide: 1000,
 }
 
 let vehicle8 = {
 	uuid:"/myusername/apps/basic001/scene/vehicle8",
 	kind:"gltf",
+	subkind: "vehicle",
 	art: "/sys/assets/van.glb",
 	xyz: [ 0,0,-10 ],
 	ypr: [0,0,0],
-	ecs: [ "/sys/apps/carworld/vehicle.js" ],
 	collide: 1000,
 }
 
 let vehicle9 = {
 	uuid:"/myusername/apps/basic001/scene/vehicle9",
 	kind:"gltf",
+	subkind: "vehicle",
 	art: "/sys/assets/sedan.glb",
 	xyz: [ 0,0,-10 ],
 	ypr: [0,0,0],
-	ecs: [ "/sys/apps/carworld/vehicle.js" ],
 	collide: 1000,
 }
 

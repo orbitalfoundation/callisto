@@ -56,19 +56,50 @@ let nav = new Nav([
 
 export default class Vehicle {
 
-	update(db,nodes) {
-		nodes.forEach( node => { this.solve_one(db,node)})
+	constructor(blob) {
+		this.pool = blob.pool
+		setInterval(this.update.bind(this),10)
+	}
+
+	route(route) {
+		console.log("vehicle: got route")
+		console.log(route)
+	}
+
+	async update() {
+
+		// must have db
+		if(!this.db) {
+			this.db = await this.pool.resolve({urn:'*:/sys/services/db',uuid:"/myusername/apps/basic001/mydb"})
+			if(!this.db) {
+				console.warn("no db")
+				return
+			}
+		}
+
+		let nodes = this.db.queryFastByHash({collide:1000})
+		if(!nodes.length) {
+			console.warn("no vehicles")
+			return
+		}
+
+		nodes.forEach( node => {
+			if(this.solve_one(this.db,node)) {
+				this.db.write(node)
+			}
+		})
 	}
 
 	collide(db,uuid,xyz,size=2) {
 		// move collision system down to be a core service - todo
 		// db could memoize these queries
+		// todo there are vastly more elegant spatial hashes than this
 
 		if(!this.colliders) {
 			this.colliders = db.queryFastByHash({collide: 1000})
-			console.log("car: got colliders " + this.colliders.length)
+			//console.log("car: got colliders " + this.colliders.length)
 		}
-		if(!this.colliders) throw "bad"
+		if(!this.colliders) return
 
 		for(let c of this.colliders) {
 			if(c.uuid == uuid) continue
@@ -115,12 +146,12 @@ export default class Vehicle {
 		// make sure there are goals
 		if(!node.nav_route || node.nav_route.length < 1) {
 			//console.warn("car has no goals atm")
-			return
+			return false
 		}
 
 		// get goal
 		let target = nav.get_path( node.nav_route[0] )
-		if(!target) return
+		if(!target) return false
 
 		// get a vector that faces target
 		let dir = [ target.xyz[0]-node.nav_current.xyz[0],
@@ -142,7 +173,7 @@ export default class Vehicle {
 //				audio.play()
 				node.honked = 1
 			}
-			return
+			return false
 		}
 		node.honked = 0
 
@@ -157,13 +188,16 @@ export default class Vehicle {
 		node.ypr[1] = Math.atan2(v.x,v.z)
 
 		// mark for update
-		node.dirty = Date.now()
+		node.updated = node.dirty = Date.now()
 
 		// be at target if close to target
 		if( dist[0]*dist[0]+dist[1]*dist[1]+dist[2]*dist[2] < 1) {
 			node.nav_route.shift()
 			node.nav_current = target
 		}
+
+		return true
 	}
 }
+
 

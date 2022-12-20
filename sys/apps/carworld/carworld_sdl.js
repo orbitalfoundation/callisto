@@ -54,7 +54,7 @@ let myavatar = {
 	adjust: {xyz:[0,0,0],ypr:[0,3.1459,0]},
 	whd: [1,1,1],
 	xyz: [3,0,3],
-	ypr: [0,0,0],
+	ypr: [0,3.9,0],
 	pickable: true,
 }
 

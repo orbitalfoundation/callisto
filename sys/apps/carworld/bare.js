@@ -1,5 +1,4 @@
 
-
 import { myscene, myavatar } from './bare_sdl.js'
 
 export default class MyApp {
@@ -32,6 +31,13 @@ export default class MyApp {
 			dest:"/myusername/apps/basic001/mydb",
 			command:"route",
 			data: myavatar,
+		})
+
+		await this.pool.resolve({
+			urn:"*:/sys/apps/carworld/vehicle",
+			uuid: "/myusername/apps/basic001/my_vehicle_agent",
+			dest:"/myusername/apps/basic001/mydb",
+			command:"route",
 		})
 
 		net.resolve({urn:"*:/sys/services/db",command:"sync"})
