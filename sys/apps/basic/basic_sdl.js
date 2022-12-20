@@ -38,8 +38,8 @@ let mylights = {
 	children: [ mylight1, mylight2 ],
 }
 
-let mything1 = {
-	uuid:"/myusername/apps/basic001/thing1_network",
+let mybox1 = {
+	uuid:"/myusername/apps/basic001/box1_network",
 	kind:"box",
 	xyz:[0,0,0],
 	whd:[1,0.01,1],
@@ -47,32 +47,12 @@ let mything1 = {
 	material: { rgba:0xff0000ff, emissive:0xffff0000, alpha:1.0 },
 }
 
-let mything2 = {
-	uuid:"/myusername/apps/basic001/thing2_network",
-	kind:"sphere",
-	xyz:[1,0,1],
-	whd:[1,0.01,1],
-	ypr:[0,0,0],
-}
-
-let mything3 = {
-	uuid:"/myusername/apps/basic001/thing3_network",
-	kind:"box",
-	xyz:[3,0,3],
-	ypr:[0,0,0],
-}
-
-let myux = {
-	uuid: "/myusername/apps/basic001/myux",
-	kind: "textarea",
-}
-
 let myavatar = {
 	uuid: "/myusername/apps/basic001/myavatar_network",
 	avatar: true,
 	camera: "/myusername/apps/basic001/camera1",
 	kind: "gltf",
-	art: "/sys/assets/female.glb",
+	art: "/sys/assets/anime_villager/scene.gltf",
 	adjust: {xyz:[0,0,0],ypr:[0,3.1459,0]},
 	whd: [1,1,1],
 	xyz: [0,0,0],
@@ -83,7 +63,7 @@ let myavatar = {
 let myscene = {
 	uuid: "/myusername/apps/basic001/scene",
 	kind: "scene",
-	children: [ mycamera, mylights, mything1, myux ],
+	children: [ mycamera, mylights, mybox1 ],
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,7 +126,7 @@ let myapp = [
 	},
 
 	///////////////////////////////////////////////////////////////////////////////////////
-	// add an handler for us to move around a puppet with - each player gets a puppet
+	// add an handler for each player to have an avatar - each avatar gets a different uuid
 	///////////////////////////////////////////////////////////////////////////////////////
 
 	// make a handler for our avatar
@@ -161,12 +141,10 @@ let myapp = [
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	// a bit of a hack for now - kick the server and tell it to echo all state to new connections
-	// later propagate new connection event to listeners and they can respond as they wish
-	// may want to better evaluate the forward casting strategy
 	///////////////////////////////////////////////////////////////////////////////////////
 
 	{
-		uuid:"/myusername/apps/basic001/mynet", // send msg to net
+		uuid:"/myusername/apps/basic001/mynet", // send msg to net who pipes it to server where it will resolve on the urn
 		urn:"*:/services/db", // it will route to db
 		command:"sync",
 	},

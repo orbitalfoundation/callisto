@@ -71,9 +71,15 @@ export default class Pool extends Factory {
 
 		// get service
 		let handler = await this.fetch(blob)
+
+		// always pass contents to resolve - may be ignored - return the promise
 		if(handler && handler.resolve && handler.resolve instanceof Function) {
-			// always pass contents to resolve - may be ignored - return the promise
-			return handler.resolve(blob)
+			handler.resolve(blob)
+		}
+
+		if(handler) {
+			// it is ok if a handler does not have a resolver
+			return handler
 		}
 
 		// else throw err

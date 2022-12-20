@@ -190,19 +190,26 @@ export default class Factory {
 
 		let construct = this._services_canonical[path]
 
-		// otherwise fetch class
+		// otherwise manufacture
 
 		if(!construct) {
 
-			let blob = await import("../.."+path+".js")
-			if(!blob) {
+			let module = null
+			if(blob.raw) {
+				let b64module = "data:text/javascript;base64,"+btoa(args.raw)
+				module = await import(b64module)
+			} else {
+				module = await import("../.."+path+".js")
+			}
+
+			if(!module) {
 				let err = "POOL::FACTORY newly loaded service is missing the resolve() channel method " + path
 				console.error(err)
 				throw err
 			}
 
 			// TODO may later handle multiple blobs per file - for now MUST be a new class decl
-			construct = blob.default
+			construct = module.default
 			if(!(construct instanceof Function)) {
 				let err = "POOL::FACTORY illegal - not a class at path= " + path
 				console.error(err)

@@ -13,28 +13,64 @@ var children = [];
 
 export default class CVDemo {
 
-	constructor(args) {
-		this.init(args)
+	constructor(blob) {
+		this._setup(blob)
 	}
 
-	async init(args) {
+	async _setup(blob) {
 
-		// remember pool
-		let pool = this.pool = args._pool
+		// sanity check - this demo only runs in a browser
+		if(typeof document === 'undefined') {
+			let err = "camera: must run on client"
+			throw err
+		}
 
-		// start a cv module -> pipe predictions to us
-		this.cv = await pool.load({urn:'*:/sys/services/cv',args:{client:this}})
+		// sanity check - supports webcam?
+		let getUserMediaSupported = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
+		if (!getUserMediaSupported) {
+			let err = "Cameras are not supported in your browser"
+			console.error(err)
+			alert(err)
+			throw err
+		}
 
-		// start a camera -> pipe video to cv
-		this.cam = await pool.load({urn:'*:/sys/services/camera',args:{client:this.cv}})
+		// has webcam buttons?
+		const button = document.getElementById('webcamButton');
+		const webcam = document.getElementById('webcam');
+		if(!button || !webcam) {
+			let err = "camera: requires a click due to web bubblewrapping of users policies"
+			throw err
+		}
 
+		// wait for click
+		button.addEventListener('click',(event)=>{
+			event.target.classList.add('removed')
+			this._setup_camera(blob.pool,webcam)
+		})
 	}
 
-	resolve(args) {
-		if(args.predictions) this.paintResults(args.predictions)
+	async _setup_camera(pool,webcam) {
+
+		// get camera service
+		let cam = await pool.resolve({urn:'*:/sys/services/camera',webcam})
+
+		// get cv module service
+		let cv = await pool.resolve({urn:'*:/sys/services/cv'})
+
+		// route camera to cv
+		cam.route(cv)
+
+		// route cv to here
+		cv.route(this)
 	}
 
-	paintResults(predictions) {
+	resolve(results) {
+
+		if(!results.predictions) return
+
+		let predictions = results.predictions
+
+
 
 		for (let i = 0; i < children.length; i++) {
 			liveView.removeChild(children[i]);

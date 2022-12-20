@@ -205,7 +205,7 @@ customElements.define('orbital-header-element', OrbitalHeaderElement )
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-import {yours_data, tutorials_data, popular_data, components_data } from "./data.js"
+import {popular_data, tutorials_data, yours_data } from "./data.js"
 import {CardSmall, CardSmallCollection} from './cards.js'
 
 
@@ -245,7 +245,7 @@ class OrbitalBrowseElement extends HTMLElement {
 	update() {
 		Object.values(this.items).forEach(item=>item.active=false)
 //		this.items["popular"].node.style.color="white"
-		let query = { observe: (callback => { callback(yours_data) }) }
+		let query = { observe: (callback => { callback(popular_data) }) }
 		this.querySelector("#spinner").remove()
 		this.querySelector("#body").appendChild(new CardSmallCollection(query))
 	}

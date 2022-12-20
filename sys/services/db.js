@@ -22,6 +22,7 @@ class DBSingleton {
 		// fragment must always have a uuid
 		if(!fragment || !fragment.uuid) {
 			let err = "db: bad fragment?"
+			console.error(err)
 			console.error(fragment)
 			return
 //			throw err
@@ -208,7 +209,9 @@ export default class DBInstance {
 				}
 			case 'sync':
 				// force write a copy of all state to all parties; this could be more elegant todo
-				this._echo(Object.values(DB.storage))
+				for(const route of this.routes) {
+					this._echo_one(route,Object.values(DB.storage))
+				}
 				break
 			case 'query':
 				if(blob.data.uuid) {
@@ -218,8 +221,10 @@ export default class DBInstance {
 				}
 			case 'destroy':
 				return DB.destroy(blob.data)
-			case 'write':
 			case 'default':
+				// convenience; allow unspecified state to be write ops
+				if(!blob.data) break
+			case 'write':
 			default:
 				return this.write(blob.data,blob.socketid)
 		}

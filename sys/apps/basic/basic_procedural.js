@@ -40,11 +40,6 @@ The server side also has a similar loopback prevention mechanic:
 
 	3) While there are some cases where we may want to re-echo changes back to socket; by default this is not supported
 
-To improve:
-
-	- i could detect the connection and then do something intelligent...
-	- it might make sense to have a lightweight message bus like that...
-
 */
 
 import { myscene, myavatar } from './basic_sdl.js'
@@ -97,7 +92,7 @@ export default class MyBasicApp {
 			data: myavatar,
 		},
 
-		// ask the server db to publish a fresh copy of all state back to us
+		// a bit of a hack - ask the server db to publish a fresh copy of all state back to us
 		net.resolve({urn:"*:/sys/services/db",command:"sync"})
 	}
 

@@ -1,0 +1,8 @@
+Model Information:
+* title:	Anime villager
+* source:	https://sketchfab.com/3d-models/anime-villager-a787c16ab873473c8dd9531963d3ae0c
+* author:	Ctool (https://sketchfab.com/ctool)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

@@ -1,4 +1,6 @@
 
+// this is super old and broken
+
 // Although this is not used here - it can be useful to find resources relative to this script like so:
 //let path = "." + (new URL(import.meta.url)).pathname.split("/").slice(0,-1).join("/")
 //console.log("multiverse: file path is = " + path)

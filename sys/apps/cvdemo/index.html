@@ -73,12 +73,15 @@ section {
 
 <script type="module">
 
+// calcuate path to current app
+let urn = (new URL(import.meta.url)).pathname; urn = "*:"+urn+(urn.split("/").at(-2))
+
 // load pool service by hand
 import Pool from '/sys/services/pool.js'
 let pool = new Pool()
 
 // run default app
-pool.load({urn: "*:/sys/apps/cvdemo/cvdemo"})
+pool.resolve({urn})
 
 </script>
 
